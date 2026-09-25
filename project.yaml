@@ -1,0 +1,17 @@
+# Card metadata consumed by https://designmolecule.com
+name: CurbCount
+slug: curbcount
+area: Smart Cities
+status: concept          # concept | design | prototype | tested | released
+shortlisted: false
+pitch: >-
+  A privacy-safe counter for people, bicycles and vehicles at street level that uses on-device detection and sends only counts, never images.
+problem: >-
+  Cities plan streets with little data on walking and cycling, and camera-based counting raises privacy concerns.
+budget_usd: 150
+difficulty: 3  # 1 easiest, 5 hardest
+hero_image: media/hero.png
+licenses:
+  hardware: CERN-OHL-S-2.0
+  software: MIT
+tags: [smart-cities, open-hardware, cern-ohl-s]
