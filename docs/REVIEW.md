@@ -199,3 +199,16 @@ Files changed: `project.yaml` (`budget_usd`, evidence list), `README.md` (budget
 ### TRL 4
 
 TRL 4 remains on hold by Amish's instruction. Decided but on hold: profiling the fixed-point tracker on the STM32WL, I²C over the 2 m cable on a street pole, window transmission and array noise measurements, and any radar build or test. Nothing past TRL 3 was created.
+
+## Session 2026-09-26: sources strengthened
+
+Every link in the README's rationale, burning platform, use tables and inspiration was fetched and checked against its claim.
+
+| Where | Old source | New source |
+| --- | --- | --- |
+| README, What sparked the idea (Cavoukian resignation, Quayside) | Engadget (2018) and Global News (2018) | The Globe and Mail (2018), which reports the resignation and quotes the letter |
+| README, European Union row; `docs/01-problem.md` (GDPR) | gdpr-info.eu alone | Regulation (EU) 2016/679 on EUR-Lex, with gdpr-info.eu kept for the article text |
+| `docs/01-problem.md` (AI Act Article 5) | artificialintelligenceact.eu alone | Regulation (EU) 2024/1689 on EUR-Lex, with artificialintelligenceact.eu kept for the article text |
+| README, Sub-Saharan Africa row | "43.9-minute global average" | "about 44 minutes", as the UNEP page states it |
+
+No country rows were replaced; all six are supported by their cited primary sources. `docs/01-problem.md` is now CBC-PRB-001 v0.5 ("Stronger sources").

@@ -3,9 +3,9 @@ doc_id: CBC-PRB-001
 title: CurbCount problem statement
 project: CurbCount
 doc_type: Problem statement
-version: "0.4"
+version: "0.5"
 status: Draft
-date: '2026-09-25'
+date: '2026-09-26'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -25,6 +25,10 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Recommendations accepted by Amish (DDR-002)
+- version: "0.5"
+  date: '2026-09-26'
+  author: Amish Chadha
+  change: Stronger sources
 ---
 
 # CurbCount problem statement
@@ -37,7 +41,7 @@ Walking and cycling carry a large share of trips and a large share of road death
 
 Motor traffic is counted routinely with loops and tubes. People on foot and on bicycles are usually counted by hand for a few hours a year, or not at all. Without continuous counts a city cannot show whether a new bike lane or a wider sidewalk changed anything, cannot compute crash exposure at a crossing, and cannot defend a street redesign against the claim that "nobody walks here."
 
-Video analytics can count all modes, but a camera on a pole captures faces, number plates and behavior. Even when the vendor processes video on the device, residents cannot inspect that claim, and a firmware change can turn a counter into a surveillance camera. In the European Union, data protection law requires data protection by design and by default ([GDPR Article 25](https://gdpr-info.eu/art-25-gdpr/)), and the AI Act prohibits real-time remote biometric identification in publicly accessible spaces for law enforcement except in narrow cases ([AI Act Article 5](https://artificialintelligenceact.eu/article/5/)). Public tolerance for image capture on streets is low and falling.
+Video analytics can count all modes, but a camera on a pole captures faces, number plates and behavior. Even when the vendor processes video on the device, residents cannot inspect that claim, and a firmware change can turn a counter into a surveillance camera. In the European Union, data protection law requires data protection by design and by default ([Regulation (EU) 2016/679, Article 25](https://eur-lex.europa.eu/eli/reg/2016/679/oj); [text of Article 25](https://gdpr-info.eu/art-25-gdpr/)), and the AI Act prohibits real-time remote biometric identification in publicly accessible spaces for law enforcement except in narrow cases ([Regulation (EU) 2024/1689](https://eur-lex.europa.eu/eli/reg/2024/1689/oj); [text of Article 5](https://artificialintelligenceact.eu/article/5/)). Public tolerance for image capture on streets is low and falling.
 
 The gap is a counter that sees too little to identify anyone, by physics rather than by policy, that is cheap enough to deploy on many poles, and that is open so a city or a residents' group can check exactly what it does.
 

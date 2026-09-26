@@ -39,16 +39,16 @@ Fixing streets for people on foot and on bicycles needs evidence of how many use
 
 | Country or region | Why it matters there |
 | --- | --- |
-| Sub-Saharan Africa | More than a billion people in Africa walk or cycle every day, about 56 minutes a day against a 43.9-minute global average, yet most countries lack policies and budgets for them ([UNEP](https://www.unep.org/resources/report/walking-and-cycling-africa-evidence-and-good-practice-inspire-action)) |
+| Sub-Saharan Africa | More than a billion people in Africa walk or cycle every day, about 56 minutes a day against a global average of about 44 minutes, yet most countries lack policies and budgets for them ([UNEP](https://www.unep.org/resources/report/walking-and-cycling-africa-evidence-and-good-practice-inspire-action)) |
 | India | Road crashes took about 300,000 lives in 2016, and most of those dying are pedestrians, cyclists and motorcyclists ([WHO India](https://www.who.int/india/health-topics/road-safety)) |
 | Latin America and the Caribbean | In the Americas, motorcyclists, pedestrians and cyclists rose from 39 % to 47 % of road deaths between 2009 and 2021 ([PAHO](https://www.paho.org/en/topics/road-safety)) |
 | United States | 7,522 pedestrians were killed in 2022, 18 % of all traffic deaths ([NHTSA](https://crashstats.nhtsa.dot.gov/Api/Public/ViewPublication/813590)) |
 | England | Walking is 29 % of all trips and cycling 2 % ([Department for Transport, 2024](https://www.gov.uk/government/statistics/walking-and-cycling-statistics-england-2023)); councils need counts to justify active travel schemes |
-| European Union | Data protection by design is a legal duty ([GDPR Article 25](https://gdpr-info.eu/art-25-gdpr/)), which favors counters that cannot capture personal data at all |
+| European Union | Data protection by design is a legal duty ([Regulation (EU) 2016/679, Article 25](https://eur-lex.europa.eu/eli/reg/2016/679/oj); [text of Article 25](https://gdpr-info.eu/art-25-gdpr/)), which favors counters that cannot capture personal data at all |
 
 ## What sparked the idea
 
-The idea traces back to Toronto's Quayside waterfront project. In October 2018 Ann Cavoukian, the former Ontario privacy commissioner who wrote the privacy-by-design framework the project had adopted, resigned as its adviser because the proposed data trust could approve collection of data that was not de-identified at source. In her resignation letter she warned that such data would create "another central database of personal information (controlled by whom?)" ([Engadget, 2018](https://www.engadget.com/2018-10-26-sidewalk-labs-ann-cavoukian-smart-city.html); [Global News, 2018](https://globalnews.ca/news/4579265/ann-cavoukian-resigns-sidewalk-labs/)). CurbCount takes the lesson literally: de-identification at source should be a property of the sensor, not a policy promise, so it uses a sensor too coarse to capture a face in the first place.
+The idea traces back to Toronto's Quayside waterfront project. In October 2018 Ann Cavoukian, the former Ontario privacy commissioner who wrote the privacy-by-design framework the project had adopted, resigned as its adviser because the proposed data trust could approve collection of data that was not de-identified at source. In her resignation letter she warned that such data would create "another central database of personal information (controlled by whom?)" ([The Globe and Mail, 2018](https://www.theglobeandmail.com/business/article-privacy-expert-ann-cavoukian-resigns-from-sidewalk-toronto-smart-city/)). CurbCount takes the lesson literally: de-identification at source should be a property of the sensor, not a policy promise, so it uses a sensor too coarse to capture a face in the first place.
 
 ## Problem
 
@@ -94,6 +94,12 @@ The priced bill of materials is in [bom/bom.csv](bom/bom.csv); the parametric mo
 ## Documentation
 
 Controlled documents follow the portfolio [documentation standard](.kit/STANDARDS.md). Each carries a document ID (CBC-PRC-001 for the precis), a version and a revision history. Branded PDFs are built with `python .kit/render.py` and attached to GitHub Releases when a document is tagged, for example `CBC-PRC-001/v1.0`.
+
+## Credits
+
+Designed by Amish Chadha. See [CONTRIBUTORS.md](CONTRIBUTORS.md) for roles. To cite this design, use [CITATION.cff](CITATION.cff) (GitHub shows it as "Cite this repository").
+
+AI assistance (Claude) was used to accelerate concept renders, prototype documentation and first-pass sizing calculations. Design direction and all decisions are Amish Chadha's, recorded in this repository's decision records (`docs/decisions/`).
 
 ## Licenses
 
