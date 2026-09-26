@@ -2,7 +2,7 @@
 
 ![TRL 3](https://img.shields.io/badge/TRL-3%20of%209-0F766E) ![Hardware: CERN-OHL-S-2.0](https://img.shields.io/badge/hardware-CERN--OHL--S--2.0-111827) ![Software: MIT](https://img.shields.io/badge/software-MIT-111827)
 
-**Area:** Smart Cities · **TRL:** 3 of 9 (proof of concept on paper) · **Prototype budget:** about $150 USD · **Difficulty:** 3 of 5
+**Area:** Smart Cities · **TRL:** 3 of 9 (proof of concept on paper) · **Prototype budget:** about $275 USD · **Difficulty:** 3 of 5
 
 A privacy-safe counter for people, bicycles and vehicles at street level that uses on-device detection and sends only counts, never images.
 
@@ -12,7 +12,7 @@ A privacy-safe counter for people, bicycles and vehicles at street level that us
 
 ## Concept rationale
 
-Counts without images give planners evidence while respecting residents. CurbCount uses a 32 x 24 pixel thermal array instead of a camera: from 4.3 m up it images a person's head at no more than about 8.5 pixels per meter and a number plate at under 2 pixels, so the sensor cannot capture a face or a plate even if its firmware were changed. An edge processor turns heat blobs into counts of people, cyclists and vehicles by direction, and only 15-minute counts leave the device.
+Counts without images give planners evidence while respecting residents. CurbCount uses a 32 x 24 pixel thermal array instead of a camera: from 4.3 m up it images a person's head at about 7.6 pixels per meter (8.5 for a 2 m person) and a number plate at under 2 pixels, so the sensor cannot capture a face or a plate even if its firmware were changed. The FieldNode core's own processor turns heat blobs into counts of people, cyclists and vehicles by direction, and only 15-minute counts leave the device.
 
 It is open and garage-buildable because trust is the point. A city, a residents' group or a researcher can read the firmware, inspect the hardware and build their own from off-the-shelf parts, clamped to an existing pole on the lab's shared FieldNode power and radio core.
 
@@ -48,7 +48,7 @@ Fixing streets for people on foot and on bicycles needs evidence of how many use
 
 ## What sparked the idea
 
-It came out of a September 2026 review of Design Molecule's applied research areas against the open projects already in the lab. It opens the smart city set. The wider trigger is the tightening rule set on sensing in public space: since 2 February 2025 the EU AI Act has prohibited real-time remote biometric identification in publicly accessible spaces for law enforcement, with narrow exceptions ([AI Act Article 5](https://artificialintelligenceact.eu/article/5/)), and cities need street data that stays clear of that line.
+The idea traces back to Toronto's Quayside waterfront project. In October 2018 Ann Cavoukian, the former Ontario privacy commissioner who wrote the privacy-by-design framework the project had adopted, resigned as its adviser because the proposed data trust could approve collection of data that was not de-identified at source. In her resignation letter she warned that such data would create "another central database of personal information (controlled by whom?)" ([Engadget, 2018](https://www.engadget.com/2018-10-26-sidewalk-labs-ann-cavoukian-smart-city.html); [Global News, 2018](https://globalnews.ca/news/4579265/ann-cavoukian-resigns-sidewalk-labs/)). CurbCount takes the lesson literally: de-identification at source should be a property of the sensor, not a policy promise, so it uses a sensor too coarse to capture a face in the first place.
 
 ## Problem
 
@@ -58,15 +58,14 @@ Cities plan streets with little data on walking and cycling, and camera-based co
 
 A privacy-safe counter for people, bicycles and vehicles at street level that uses on-device detection and sends only counts, never images.
 
-A thermal array on a short arm looks down over the sidewalk, bike lane and nearest traffic lane; an edge processor tracks heat blobs and counts them by class and direction; and a FieldNode core with a 20 W panel and two LiFePO4 cells sends 15-minute counts over LoRaWAN to TwinKit or any LoRaWAN server. The TRL 3 calculations ([CBC-CAL-001](docs/04-calcs/01-sizing.md)) give 0.27 W average from the cells, 4.8 days of counting without sun, a footprint 12.8 m across the street and 6 to 7 m along it, which covers a 3 m sidewalk, a 2 m bike lane and the nearest lane, and 6.0 kg on the pole. Three requirements are not met: parts cost ($290.00 against the $150 budget), counting in hot weather (a thermal array loses its contrast when pavement and people are near the same temperature), and the ground pixel size as the privacy requirement is written, although the privacy aim itself is met. See the [requirements](docs/03-requirements.md).
+A thermal array on a short arm looks down over the sidewalk, bike lane and nearest traffic lane; a standard FieldNode core (one LiFePO4 cell, 6 W panel) reads the array, tracks heat blobs in fixed-point firmware on its STM32WL, counts them by class and direction, and sends a 10-byte record every 15 minutes over LoRaWAN to TwinKit or any LoRaWAN server. The TRL 3 calculations ([CBC-CAL-001](docs/04-calcs/01-sizing.md)) give 0.10 W average from the cell, 6.2 days of counting without sun, a footprint 12.8 m across the street and 6 to 7 m along it, which covers a 3 m sidewalk, a 2 m bike lane and the nearest lane, 4.4 kg on the pole and $253.00 in parts against the $275 budget. No requirement is unmet on paper; three are at risk: counting fast cars (4.2 frames at 50 km/h), people walking close together, and counting on sunlit pavement. The thermal build is for temperate sites; a hot-climate city would use a radar variant. See the [requirements](docs/03-requirements.md) and the [decision record](docs/decisions/0002-recommendations-accepted.md).
 
 Full design precis: [docs/02-concept.md](docs/02-concept.md)
 
 ## Key components
 
-- Low-resolution thermal array (32 x 24 px, 110 x 75° lens, wide axis across the street) behind an HDPE window; mmWave radar kept as a hot-climate variant
-- Edge processor (ESP32-S3 class) in the sensor head
-- FieldNode power and radio core, with a 20 W panel and second LiFePO4 cell (high-load variant)
+- Low-resolution thermal array (32 x 24 px, 110 x 75° lens, wide axis across the street) behind an HDPE window; mmWave radar as the hot-climate variant
+- FieldNode power and radio core, standard: one LiFePO4 cell, 6 W panel, STM32WL running the tracker (an ESP32-S3 head is kept on paper as a fallback)
 - Aluminum sensor arm, pole-top panel mount and stainless band clamps
 - Public notice plate on the pole
 
@@ -76,7 +75,7 @@ The priced bill of materials is in [bom/bom.csv](bom/bom.csv); the parametric mo
 
 > Privacy by design: no images, audio recordings or personal identifiers leave the device; only aggregate counts or levels are stored. Check local data protection law before any deployment. Street furniture and pole mounts must be installed only with the asset owner's permission, by trained crews, with fall protection and traffic management as local rules require.
 >
-> The node contains LiFePO4 cells: fuse the pack and charge only within the cell maker's temperature limits. Fit safety lanyards to the panel and sensor head so nothing can fall on people below.
+> The node contains a LiFePO4 cell: keep it fused and charge only within the cell maker's temperature limits. Fit safety lanyards to the panel and sensor head so nothing can fall on people below.
 
 ## Repository layout
 
@@ -101,4 +100,4 @@ Controlled documents follow the portfolio [documentation standard](.kit/STANDARD
 - **Hardware** (CAD, drawings, BOM, electronics): [CERN-OHL-S v2](LICENSE)
 - **Software** (firmware, scripts, notebooks): [MIT](LICENSE-SOFTWARE)
 
-A project of the [Design Molecule](https://designmolecule.com) lab. Smart cities set.
+A project of the [Design Molecule](https://designmolecule.com) lab.

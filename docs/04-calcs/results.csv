@@ -2,15 +2,15 @@ id,value,target,status
 R1,4.2 frames minimum (car at 50 km/h); at least 4 assumed needed,3 classes x 2 directions,At risk
 R2,Random merges alone 6.5 % undercount at 600/h; groups extra,Within 10 % of manual counts per hour,At risk (not verifiable at TRL 3)
 R3,4.2 frames per car; 3.4 px smear per subpage,Within 15 % of manual counts per hour,Not verifiable at TRL 3
-R4,Smallest ground pixel 0.22 m; 8.5 px/m at head height (identify needs 250),Ground pixel 0.25 m or larger,Not met (as written; privacy aim met)
-R5,"14 bytes per 15 min bin, 6 counters and status","15-minute counts per class and direction, open format",Met by design
+R4,"7.6 px/m at head height for a 1.75 m person (8.5 for 2.0 m); detect needs 25, identify 250","8 px/m or less at head height (1.75 m person), below the IEC 62676-4 detection level of 25 px/m",Met on paper
+R5,"10 bytes per 15 min bin, six 12-bit counters and a status byte","15-minute counts per class and direction, open format",Met by design
 R6,Footprint -4.45 to 8.34 m across; margins 10.9 deg; shadow 0.73 m wide behind the pole,"3 m sidewalk, 2 m bike lane and nearest lane from one pole",Met on paper (array turned 90 deg)
-R7,"Hot design day: pedestrians below detection contrast 14.2 h (sunlit), 24.0 h (shaded)",-20 to +50 C; counting with air up to 35 C,"Not met (on paper, hot weather)"
-R8,4.78 d (two cells); 3.35 d at -20 C; 2.39 d with one cell,3 days of continuous counting,Met on paper (two cells)
-R9,14.5 Wh/day stored against 6.43 Wh/day (20 W); 4.4 Wh/day with 6 W,"Energy neutral at 1.5 peak sun hours, 40 % derating",Met on paper (20 W)
+R7,"Mild design day: 10.2 h sunlit below single-frame contrast, 3.2 h with track averaging, 0.0 h shaded",-20 to +50 C survival; counting at temperate sites (air up to 20 C); hot sites use the radar variant,At risk (sunlit sidewalks need track averaging)
+R8,6.22 d (one cell); 4.36 d at -20 C; 4.98 d at end of life,3 days of continuous counting,Met on paper (one cell)
+R9,4.4 Wh/day stored against 2.47 Wh/day (6 W),"Energy neutral at 1.5 peak sun hours, 40 % derating",Met on paper (6 W)
 R10,"IP65 enclosure (FieldNode), gasketed head with film window",IP65,Not verifiable at TRL 3
-R11,6.02 kg,6 kg or less,At risk (within the 5 % uncertainty of the assumed masses)
-R12,"Install estimate 59 min; panel 170 N, post factor 9, twist factor 3.2","Two people, 60 min, no drilling; 35 m/s gusts",Not verifiable at TRL 3 (wind and fit met on paper)
-R13,$290.00,$150 or less (proposed $275),Not met
-R14,Nightly depth of discharge 11 %; window UV and cell heat unknown,"5 years, one battery change",Not verifiable at TRL 3
-R15,0.91 s/h at SF9 (limit 36 s/h); 226 ms against 400 ms dwell; 14 bytes exceed US915 DR0,EU868 1 % duty cycle and US915 dwell limits,At risk (US915 DR0 payload)
+R11,4.44 kg,6 kg or less,Met on paper
+R12,"Install estimate 59 min; panel 52 N, post factor 38, twist factor 3.2","Two people, 60 min, no drilling; 35 m/s gusts",Not verifiable at TRL 3 (wind and fit met on paper)
+R13,$253.00,$275 or less (budget_usd),Met on paper
+R14,Nightly depth of discharge 9 %; window UV and cell heat unknown,"5 years, one battery change",Not verifiable at TRL 3
+R15,0.82 s/h at SF9 (limit 36 s/h); 371 ms at US915 DR0 against 400 ms dwell; 10 of 11 bytes,EU868 1 % duty cycle and US915 dwell limits,Met on paper

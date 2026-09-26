@@ -1,4 +1,4 @@
-"""CurbCount general arrangement sheet CBC-DWG-001, Rev P1 (TRL 3).
+"""CurbCount general arrangement sheet CBC-DWG-001, Rev P2 (TRL 3, CBC-DDR-002 applied).
 
 Run from the repo root:  python cad/src/sheets.py
 Writes cad/drawings/CBC-DWG-001.svg, .pdf and .png from the parametric model in cad/src/model.py
@@ -99,10 +99,11 @@ def main():
     asm = Compound(children=[v for kk, v in parts.items() if kk != "notice"] + [pole])
     views = safe_project_views(asm, work)
     bb = asm.bounding_box()
-    s = Sheet(project="CurbCount", title="General arrangement", dwg_no="CBC-DWG-001", rev="P1",
+    s = Sheet(project="CurbCount", title="General arrangement", dwg_no="CBC-DWG-001", rev="P2",
               author="Amish Chadha", date=DATE, scale=None, theme="technical",
               material="Aluminium mounts, ASA head; bought-in parts per bom/bom.csv. PRELIMINARY, NOT FOR FABRICATION",
-              revisions=[("P1", "Preliminary GA for TRL 3 (from cad/src/model.py)", DATE, "AC")])
+              revisions=[("P1", "Preliminary GA for TRL 3 (from cad/src/model.py)", DATE, "AC"),
+                         ("P2", "DDR-002: 6 W panel, one cell, no head processor", DATE, "AC")])
     s.add_ortho(views)
     k = s.scale
     c = ortho_cells(s, views)
@@ -147,7 +148,7 @@ def main():
         f"Head {P['head'][0]:.0f} x {P['head'][1]:.0f} x {P['head'][2]:.0f}, window {P['window_z']:.0f} above road, tilt {P['tilt']} deg",
         f"Arm 40 x 40 x 2 Al, {D['arm_len']:.0f} long; reach {D['reach']:.0f} from pole axis",
         f"FieldNode enclosure {P['enc'][0]:.0f} x {P['enc'][1]:.0f} x {P['enc'][2]:.0f}, center {P['enc_zc']:.0f}",
-        f"Panel 20 W {P['panel'][0]:.0f} x {P['panel'][1]:.0f}, tilt {P['panel_tilt']:.0f} deg on a {P['sleeve'][0]:.0f} sleeve",
+        f"Panel 6 W (FieldNode) {P['panel'][0]:.0f} x {P['panel'][1]:.0f}, tilt {P['panel_tilt']:.0f} deg on a {P['sleeve'][0]:.0f} sleeve",
         "Four 12 mm stainless bands; no drilling of the pole",
         "M12 5-pin cable, enclosure port to head (FieldNode pinout)",
         f"Footprint {D['fp_x_min'] / 1000:.1f} to {D['fp_x_max'] / 1000:.1f} m across the street (CBC-CAL-001)",

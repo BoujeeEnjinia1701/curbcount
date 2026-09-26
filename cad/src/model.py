@@ -3,14 +3,15 @@
 Run from the repo root:  python cad/src/model.py
 Exports STEP and STL into cad/step and cad/stl:
     curbcount-assembly.step / .stl    the whole counter on a 114 mm street pole (pole included as context)
-    sensor-head.step / .stl           sensor arm, saddle, head housing, hood, window, array and processor
+    sensor-head.step / .stl           sensor arm, saddle, head housing, hood, window and array
     power-core.step / .stl            FieldNode core (enclosure, board, cells) with its saddle plate, clamps and panel mount
 
 Axes (mm): road surface at Z = 0, curb face at X = 0, sidewalk at X < 0 with its top at Z = sw_h,
 the street runs along Y. The pole stands in the sidewalk behind the curb. The sensor head hangs
 from a short arm over the curb and looks down across the sidewalk, bike lane and nearest lane,
-tilted toward the road. The FieldNode enclosure sits on the back of the pole, the 20 W panel on
-a pole-top mount. Main dimensions and interfaces only: not fabrication detail, not for fabrication.
+tilted toward the road. The FieldNode enclosure sits on the back of the pole, the standard 6 W
+FieldNode panel on a pole-top mount. Tracking runs on the FieldNode STM32WL (CBC-DDR-002), so the
+head carries the array only and the core uses standard FieldNode power (one cell). Main dimensions and interfaces only: not fabrication detail, not for fabrication.
 
 The same PARAMS and the camera model below feed docs/04-calcs/sizing.py (CBC-CAL-001), the
 drawing CBC-DWG-001 (cad/src/sheets.py) and the concept media (cad/src/concept_media.py).
@@ -26,29 +27,28 @@ PARAMS = {
     "pole_x": -450.0, "pole_od": 114.3, "pole_h": 5000.0,
     # 10 thermal array: MLX90640 class, 32 x 24 px, 110 x 75 deg lens, 110 deg axis ACROSS the street (CBC-CAL-001 B)
     "px": (32, 24), "fov": (110.0, 75.0),
-    # 8 to 11 sensor head: window height above the road, head center X, tilt of the view toward the road
+    # 8 to 10 sensor head: window height above the road, head center X, tilt of the view toward the road
     "window_z": 4300.0, "head_x": 80.0, "tilt": 7.5,
     "head": (110.0, 90.0, 70.0), "head_wall": 3.0, "hood": (150.0, 120.0, 4.0),
     "window": (100.0, 80.0, 0.5),                  # 9 HDPE film, 0.5 mm
-    "esp": (70.0, 50.0, 8.0),                      # 11 processor board
     # 7 sensor arm: 40 x 40 x 2 aluminium tube on a saddle plate with two band clamps
     "arm": (40.0, 2.0), "saddle": (6.0, 90.0, 160.0), "arm_band_dz": 55.0,
     # 1 to 3 FieldNode core (FND-PRC-001 v0.3): enclosure 150 W x 90 D x 200 H, center height
     "enc": (150.0, 90.0, 200.0), "enc_wall": 3.0, "enc_zc": 3850.0,
     "enc_plate": (3.0, 140.0, 260.0),              # 6 aluminium enclosure saddle plate (FieldNode's V-blocks fit 40 to 60 mm poles only)
     "board": (10.0, 60.0, 80.0), "ctrl": (8.0, 45.0, 70.0),
-    "cell": (32.0, 70.0), "n_cells": 2,
+    "cell": (32.0, 70.0), "n_cells": 1,          # standard FieldNode: one cell (CBC-DDR-002)
     "whip": (10.0, 190.0), "m12_d": 16.0,
-    # 4, 5 solar panel 20 W on an aluminium pole-top mount: sleeve over the pole top, post and hinge plate
-    "panel": (540.0, 350.0, 25.0), "panel_tilt": 35.0,
+    # 4, 5 solar panel 6 W (FieldNode standard, 9 V class) on an aluminium pole-top mount: sleeve, post and hinge plate
+    "panel": (290.0, 200.0, 17.0), "panel_tilt": 35.0,
     "sleeve": (120.0, 4.0, 4.0),                   # length, wall, radial clearance
     "post": (42.4, 3.0, 150.0),                    # OD, wall, height above the sleeve cap
-    "hinge": (140.0, 180.0, 5.0),                  # hinge plate under the panel frame
+    "hinge": (140.0, 160.0, 5.0),                  # hinge plate under the panel frame
     # 6 band clamps: 12 mm stainless bands
     "band_w": 12.0,
-    # 12 sensor cable
+    # 11 sensor cable
     "cable_d": 6.0,
-    # 13 public notice plate on the pole, facing the sidewalk
+    # 12 public notice plate on the pole, facing the sidewalk
     "notice": (1.5, 150.0, 200.0), "notice_z": 2600.0,
     # scene extents for context (road beyond the nearest lane, street length)
     "scene_y": 5000.0, "road_w": 6000.0,
@@ -57,17 +57,16 @@ PARAMS = {
 BOM = {  # key: (BOM line in bom/bom.csv, name)
     "enclosure": (1, "FieldNode enclosure, ports, antenna"),
     "board": (2, "FieldNode power and radio board"),
-    "cells": (3, "LiFePO4 cells, 2 x 6 Ah"),
-    "panel": (4, "Solar panel, 20 W"),
+    "cells": (3, "LiFePO4 cell, 6 Ah"),
+    "panel": (4, "Solar panel, 6 W"),
     "mount": (5, "Panel pole-top mount"),
     "clamps": (6, "Band clamps (4), enclosure saddle"),
     "arm": (7, "Sensor arm with saddle"),
     "housing": (8, "Sensor head housing and hood"),
     "window": (9, "LWIR window, 0.5 mm HDPE"),
     "array": (10, "Thermal array, 32 x 24 px"),
-    "esp": (11, "Edge processor, ESP32-S3"),
-    "cable": (12, "Sensor cable, M12"),
-    "notice": (13, "Public notice plate"),
+    "cable": (11, "Sensor cable, M12"),
+    "notice": (12, "Public notice plate"),
 }
 
 
@@ -184,7 +183,7 @@ def _band(x, z, r_in, w):
 
 
 def build_parts(p=PARAMS):
-    """Return {key: solid} for BOM lines 1 to 13 (line 14, hardware, has no geometry)."""
+    """Return {key: solid} for BOM lines 1 to 12 (line 13, hardware, has no geometry)."""
     from build123d import Box, Cylinder, Pos, Rot
     D = derived(p)
     pr = D["pole_r"]
@@ -244,7 +243,7 @@ def build_parts(p=PARAMS):
     tube = Pos(D["arm_x0"] + L / 2, 0, D["arm_z"]) * (Box(L, a, a) - Box(L + 2, a - 2 * at, a - 2 * at))
     out["arm"] = saddle + tube
 
-    # 8 to 11 sensor head: housing open underneath for the window, sun hood, array, processor; tilted toward the road
+    # 8 to 10 sensor head: housing open underneath for the window, sun hood, array; tilted toward the road
     hx, hy, hz = p["head"]
     hw = p["head_wall"]
     H = Pos(p["head_x"], 0, D["head_zc"]) * Rot(0, -p["tilt"], 0)
@@ -254,9 +253,8 @@ def build_parts(p=PARAMS):
     wx, wy, wt = p["window"]
     out["window"] = H * Pos(0, 0, -hz / 2 + 2) * Box(wx, wy, max(wt, 1.0))
     out["array"] = H * (Pos(0, 0, -hz / 2 + 14) * Cylinder(4.7, 12) + Pos(0, 0, -hz / 2 + 21) * Box(32, 26, 2))
-    out["esp"] = H * Pos(0, 0, hz / 2 - hw - 10) * Box(*p["esp"])
 
-    # 12 sensor cable: M12 port under the enclosure, round to the pole, up the pole, along the arm, into the head
+    # 11 sensor cable: M12 port under the enclosure, round to the pole, up the pole, along the arm, into the head
     r = p["cable_d"] / 2
     cy = -pr - 8
     z0 = D["enc_bot"] - 30
@@ -270,7 +268,7 @@ def build_parts(p=PARAMS):
         cable = seg if cable is None else cable + seg
     out["cable"] = cable
 
-    # 13 public notice plate, banded to the sidewalk side of the pole at eye height
+    # 12 public notice plate, banded to the sidewalk side of the pole at eye height
     nx, ny, nz = p["notice"]
     out["notice"] = Pos(p["pole_x"] - pr - nx / 2, 0, p["notice_z"]) * Box(nx, ny, nz)
     return out
@@ -315,7 +313,7 @@ if __name__ == "__main__":
     C = context_parts()
     groups = {
         "curbcount-assembly": list(P.values()) + [C["pole"]],
-        "sensor-head": [P[k] for k in ("arm", "housing", "window", "array", "esp")],
+        "sensor-head": [P[k] for k in ("arm", "housing", "window", "array")],
         "power-core": [P[k] for k in ("enclosure", "board", "cells", "panel", "mount", "clamps")],
     }
     for name, shapes in groups.items():

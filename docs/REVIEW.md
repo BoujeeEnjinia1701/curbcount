@@ -34,16 +34,16 @@ Requirements not met or at risk:
 - **R2 (accuracy) at risk:** people walking side by side merge into one blob.
 - **R7 (hot weather) at risk:** little thermal contrast when pavement and air are near body temperature.
 
-### Proposed, awaiting Amish
+### Proposed, awaiting Amish (items 1 to 7 now Decided by Amish, 2026-09-25: go with recommendation; item 8 still awaiting Amish; see CBC-DDR-002)
 
-1. **Budget.** Options: (a) raise `budget_usd` to $275; (b) keep $150 and cost the FieldNode core (about $95 of the $271) under FieldNode, leaving about $176 for CurbCount parts, still over; (c) cut cost with an 8 x 8 thermal array and no separate processor, which weakens R1 and R2. Recommendation: (a). `project.yaml` is unchanged.
-2. **Sensor.** Option A: 32 x 24 thermal array (cheap, low power, privacy by physics). Option B: 60 GHz mmWave radar (works in heat and darkness, costs and draws more). Recommendation: A for the first build, B studied as a hot-climate variant.
-3. **Power.** The counter needs a FieldNode "high-load" variant (20 W panel, second cell). Recommendation: raise this with the FieldNode project rather than changing FieldNode here.
-4. **Processor.** ESP32-S3 in the sensor head, or tracking on FieldNode's STM32WL alone. Recommendation: ESP32-S3 first; STM32WL-only as a TRL 3 study.
-5. **Count interval** of 15 minutes, and three classes (pedestrian, cyclist or micromobility, motor vehicle). Recommendation: adopt both.
-6. **Calibration mode** that shows frames on a laptop through a physical jumper only. Recommendation: allow it, never over the radio.
-7. **Public notice** on each pole linking to this repository. Recommendation: yes.
-8. **First partner and street** for co-design.
+1. **Budget.** Options: (a) raise `budget_usd` to $275; (b) keep $150 and cost the FieldNode core (about $95 of the $271) under FieldNode, leaving about $176 for CurbCount parts, still over; (c) cut cost with an 8 x 8 thermal array and no separate processor, which weakens R1 and R2. Recommendation: (a). Decided by Amish, 2026-09-25: go with recommendation (`budget_usd` now $275, see the TRL 3 session item 2).
+2. **Sensor.** Option A: 32 x 24 thermal array (cheap, low power, privacy by physics). Option B: 60 GHz mmWave radar (works in heat and darkness, costs and draws more). Recommendation: A for the first build, B studied as a hot-climate variant. Decided by Amish, 2026-09-25: go with recommendation.
+3. **Power.** The counter needs a FieldNode "high-load" variant (20 W panel, second cell). Recommendation: raise this with the FieldNode project rather than changing FieldNode here. Decided by Amish, 2026-09-25: go with recommendation.
+4. **Processor.** ESP32-S3 in the sensor head, or tracking on FieldNode's STM32WL alone. Recommendation: ESP32-S3 first; STM32WL-only as a TRL 3 study. Decided by Amish, 2026-09-25: go with recommendation.
+5. **Count interval** of 15 minutes, and three classes (pedestrian, cyclist or micromobility, motor vehicle). Recommendation: adopt both. Decided by Amish, 2026-09-25: go with recommendation.
+6. **Calibration mode** that shows frames on a laptop through a physical jumper only. Recommendation: allow it, never over the radio. Decided by Amish, 2026-09-25: go with recommendation.
+7. **Public notice** on each pole linking to this repository. Recommendation: yes. Decided by Amish, 2026-09-25: go with recommendation.
+8. **First partner and street** for co-design. No recommendation; Proposed, awaiting Amish.
 
 ### Safety concerns
 
@@ -97,22 +97,22 @@ On 2026-09-25 Amish asked for this batch of repos to be taken through the usual 
 
 Key numbers: 268 mW average from the cells (2.1 times FieldNode's 115 mW allowance); 5.0 A peak charge current from the 20 W panel; HDPE window transmission about 0.75 (estimate).
 
-Design changes made from the calculations, open for Amish's review with the rest: the array is turned 90 degrees (110 degree axis across the street, 7.5 degree tilt), which moves R6 from not met to met on paper; the pole-top mount is aluminium (the steel one weighed 5.7 kg); the FieldNode enclosure takes its TRL 3 size (150 x 90 x 200 mm) on a CurbCount saddle plate.
+Design changes made from the calculations, open for Amish's review with the rest (now Decided by Amish, 2026-09-25: go with recommendation, CBC-DDR-002): the array is turned 90 degrees (110 degree axis across the street, 7.5 degree tilt), which moves R6 from not met to met on paper; the pole-top mount is aluminium (the steel one weighed 5.7 kg); the FieldNode enclosure takes its TRL 3 size (150 x 90 x 200 mm) on a CurbCount saddle plate.
 
 ### Decisions recorded (CBC-DDR-001)
 
-Adopted as recommended for TRL 3 under Amish's 2026-09-25 instruction, open for his review: D1 budget option (a), $275, recorded only, `budget_usd` unchanged at $150; D2 thermal array first, radar as a hot-climate variant; D3 FieldNode high-load variant, raised with FieldNode rather than changed there; D4 ESP32-S3 first, STM32WL-only studied (done, CBC-CAL-001 section F); D5 15-minute bins and three classes; D6 jumper-only calibration mode; D7 public notice plate. No reworded pitch or problem was recommended, so `project.yaml` and `README.md` keep the existing wording.
+Adopted as recommended for TRL 3 under Amish's 2026-09-25 instruction, open for his review (now all Decided by Amish, 2026-09-25: go with recommendation, CBC-DDR-002): D1 budget option (a), $275, recorded only, `budget_usd` unchanged at $150; D2 thermal array first, radar as a hot-climate variant; D3 FieldNode high-load variant, raised with FieldNode rather than changed there; D4 ESP32-S3 first, STM32WL-only studied (done, CBC-CAL-001 section F); D5 15-minute bins and three classes; D6 jumper-only calibration mode; D7 public notice plate. No reworded pitch or problem was recommended, so `project.yaml` and `README.md` keep the existing wording.
 
-### Still awaiting Amish
+### Still awaiting Amish (items 2 to 8 now Decided by Amish, 2026-09-25: go with recommendation, CBC-DDR-002; item 1 still awaiting Amish)
 
 1. **O1, first co-design partner and street.** No recommendation was made.
-2. **O2, budget.** `budget_usd` stays $150. The recommended $275 is itself $15 short of the $290.00 BOM. Options: (a) $300; (b) $275 with the STM32WL-only variant (about $253); (c) keep $150 and accept R13 not met. Recommendation: (b), if item 3 is accepted; otherwise (a).
-3. **New, move tracking to the STM32WL.** CBC-CAL-001 section F finds it feasible on paper with a fixed-point tracker (2 % of the core, 44 kB of 64 kB RAM) and it brings the head to 92 mW, inside FieldNode's allowance, so standard FieldNode power (one cell, 6 W) meets R8 and R9 and about 1.5 kg and $37 come off. Risks: I²C over the 2 m cable and the reference driver's floating-point cost. Recommendation: adopt as the baseline for the first build, keep the ESP32-S3 head as the fallback. Not applied.
-4. **New, R7 and the sensor for hot climates.** A thermal-only counter goes blind for much of a hot day. Options: (a) restrict the thermal build to temperate sites and state it; (b) bring the radar variant forward as the hot-climate build; (c) a hybrid head. Recommendation: (a) now and (b) for any hot partner city. Not applied.
-5. **New, restate R4.** Replace "ground pixel 0.25 m or larger" with "8 px/m or less at head height, below the IEC 62676-4 detection level of 25 px/m", which matches the privacy aim. Recommendation: adopt. Not applied.
-6. **New, R11 mass.** 6.02 kg against 6 kg. Recommendation: keep 6 kg and meet it through item 3 (about 4.5 kg). Not applied.
-7. **New, payload.** Pack the record into 10 bytes (six 12-bit counters and a status byte) so it fits US915 DR0 (R15). Recommendation: adopt. Not applied.
-8. **New, raise with FieldNode (not edited here):** the high-load variant needs a charger set for 5 A and a second fused cell; CurbCount needs a 60 to 140 mm pole saddle; the sensor port pinout needs I²C or UART plus a 3.3 V rail.
+2. **O2, budget.** `budget_usd` stays $150. The recommended $275 is itself $15 short of the $290.00 BOM. Options: (a) $300; (b) $275 with the STM32WL-only variant (about $253); (c) keep $150 and accept R13 not met. Recommendation: (b), if item 3 is accepted; otherwise (a). Decided by Amish, 2026-09-25: go with recommendation: (b).
+3. **New, move tracking to the STM32WL.** CBC-CAL-001 section F finds it feasible on paper with a fixed-point tracker (2 % of the core, 44 kB of 64 kB RAM) and it brings the head to 92 mW, inside FieldNode's allowance, so standard FieldNode power (one cell, 6 W) meets R8 and R9 and about 1.5 kg and $37 come off. Risks: I²C over the 2 m cable and the reference driver's floating-point cost. Recommendation: adopt as the baseline for the first build, keep the ESP32-S3 head as the fallback. Decided by Amish, 2026-09-25: go with recommendation.
+4. **New, R7 and the sensor for hot climates.** A thermal-only counter goes blind for much of a hot day. Options: (a) restrict the thermal build to temperate sites and state it; (b) bring the radar variant forward as the hot-climate build; (c) a hybrid head. Recommendation: (a) now and (b) for any hot partner city. Decided by Amish, 2026-09-25: go with recommendation.
+5. **New, restate R4.** Replace "ground pixel 0.25 m or larger" with "8 px/m or less at head height, below the IEC 62676-4 detection level of 25 px/m", which matches the privacy aim. Recommendation: adopt. Decided by Amish, 2026-09-25: go with recommendation.
+6. **New, R11 mass.** 6.02 kg against 6 kg. Recommendation: keep 6 kg and meet it through item 3 (about 4.5 kg). Decided by Amish, 2026-09-25: go with recommendation.
+7. **New, payload.** Pack the record into 10 bytes (six 12-bit counters and a status byte) so it fits US915 DR0 (R15). Recommendation: adopt. Decided by Amish, 2026-09-25: go with recommendation.
+8. **New, raise with FieldNode (not edited here):** the high-load variant needs a charger set for 5 A and a second fused cell; CurbCount needs a 60 to 140 mm pole saddle; the sensor port pinout needs I²C or UART plus a 3.3 V rail. Decided by Amish, 2026-09-25: go with recommendation; listed under cross-repo actions in the 2026-09-25 recommendations-accepted session.
 
 Suggestion only, not in the repo: a side-arm panel mount for poles whose top carries a lantern.
 
@@ -139,3 +139,63 @@ Suggestion only, not in the repo: a side-arm panel mount for poles whose top car
 ### Recommended next step
 
 TRL 4 is on hold by Amish's instruction; this repo stops at TRL 3. Amish's review is needed on items 1 to 7 above and the design changes listed under the requirement table; item 8 should go to the FieldNode project. For the record only, TRL 4 would need: a bench build of the sensor head on a FieldNode core; a lab test report (TST, `environment: lab`) covering window transmission, array noise at 16 Hz, tracker CPU and RAM on the STM32WL, I²C over the cable, current draw and charge current; and build log entries. None of this has been started.
+
+## Session 2026-09-25: recommendations accepted
+
+On 2026-09-25 Amish wrote: "i accept all your recommendations, go with them across all repos." Every item in this note and in CBC-DDR-001 that carried a recommendation is now **Decided by Amish, 2026-09-25: go with recommendation**, recorded in `docs/decisions/0002-recommendations-accepted.md` (CBC-DDR-002 v0.1). The repo stays at `trl: 3`, `trl_target: 3`.
+
+### Decisions applied and what changed
+
+| Decision | Before | After |
+| --- | --- | --- |
+| Budget, option (b) (O2, TRL 3 item 2) | `budget_usd` $150; R13 target $150 | `budget_usd` $275; R13 target $275 |
+| Tracking on the STM32WL as baseline, ESP32-S3 as fallback (TRL 3 item 3) | ESP32-S3 head, two cells, 20 W panel; head 241 mW; 6.43 Wh/day | No head processor, one cell, FieldNode's 6 W panel; head 92 mW; 2.47 Wh/day |
+| Parts cost (follows the two above) | $290.00, 14 BOM lines | $253.00, 13 lines (line 11 removed, 12 to 14 renumbered 11 to 13) |
+| Mass, keep R11 at 6 kg (TRL 3 item 6) | 6.02 kg, at risk | 4.44 kg, met on paper |
+| Autonomy and winter harvest (R8, R9) | 4.78 days on two cells; 14.5 Wh/day from 20 W | 6.22 days on one cell; 4.4 Wh/day from 6 W (1.77 times the draw) |
+| Payload of 10 bytes (TRL 3 item 7) | 14 bytes; does not fit US915 DR0; SF9 226 ms | 10 bytes; 371 ms at US915 DR0; SF9 206 ms |
+| Restate R4 (TRL 3 item 5) | Ground pixel 0.25 m or larger; 0.22 m, not met | 8 px/m or less at head height; 7.6 px/m, met on paper |
+| R7 restricted to temperate sites; radar for any hot partner city (TRL 3 item 4) | Counting with air to 35 °C; not met | Count at temperate sites (air to 20 °C); at risk (10.2 h sunlit single-frame, 3.2 h with track averaging on the mild day) |
+| Wind on the panel (follows the 6 W panel) | 170 N; 933 N·m at the pole base | 52 N; 283 N·m |
+| TRL 2 items D1 to D7 and the three TRL 3 design changes | Adopted for TRL 3, open for review | Decided; no further repo change |
+
+Files changed: `project.yaml` (`budget_usd`, evidence list), `README.md` (budget line, rationale figures, "What sparked the idea" rewritten, Concept, Key components, Safety), `docs/01-problem.md` (CBC-PRB-001 v0.4), `docs/02-concept.md` (CBC-PRC-001 v0.4), `docs/03-requirements.md` (CBC-REQ-001 v0.4), `docs/04-calcs/01-sizing.md` (CBC-CAL-001 v0.2) and `sizing.py` with `results.csv`, `docs/decisions/0001-trl2-review-decisions.md` (CBC-DDR-001 v0.2), the new CBC-DDR-002, `bom/bom.csv` and `bom-notes.md`, `cad/src/model.py` with STEP and STL, `cad/src/sheets.py` and CBC-DWG-001 at Rev P2, `cad/src/concept_media.py` and all of `media/` (blueprint Rev P3). All PDFs were rebuilt; the footers now read designmolecule.com.
+
+### Requirement status (CBC-CAL-001 v0.2)
+
+0 not met, 3 at risk, 4 not verifiable at TRL 3, 7 met on paper, 1 met by design.
+
+| ID | Status | Key number |
+| --- | --- | --- |
+| R1 Classes and directions | At risk | 4.2 frames for a car at 50 km/h (4 assumed needed) |
+| R2 Pedestrian accuracy | At risk | Random merging alone loses 6.5 % at 600/h |
+| R7 Operating range (temperate) | At risk | Mild day, sunlit: 10.2 h below single-frame contrast, 3.2 h with track averaging |
+| R3, R10, R12, R14 | Not verifiable at TRL 3 | R12: 59 min install; post factor 38, twist factor 3.2 |
+| R4, R6, R8, R9, R11, R13, R15 | Met on paper | 7.6 px/m; footprint -4.45 to 8.34 m; 6.22 days; 4.4 Wh/day; 4.44 kg; $253.00; 371 ms at DR0 |
+| R5 | Met by design | 10 bytes per 15 min bin |
+
+### Still awaiting Amish
+
+1. **O1, first co-design partner and street.** No recommendation was made. A hot partner city would bring the radar variant forward (decided in principle, no design work until a partner is chosen).
+
+### Cross-repo actions (FieldNode not edited here)
+
+- FieldNode: CurbCount's baseline now fits FieldNode's standard power (one cell, 6 W panel, 1.5 A charger) and the proposed 100 mW sensor allowance (92 mW). The high-load variant (20 W panel, 5 A charger, second fused cell) is needed only by the ESP32-S3 fallback.
+- FieldNode: the sensor port pinout needs I²C plus a 3.3 V switched rail, and the STM32WL firmware must host a fixed-point tracker (about 2 % of the core, 44 kB of 64 kB RAM estimated).
+- FieldNode: a jumper-sense pin on the service header for CurbCount's calibration mode (frames to a laptop over the wired service port only).
+- FieldNode: its mount kit seats 40 to 60 mm poles; CurbCount keeps its own 60 to 140 mm saddle. FieldNode may want a street-pole saddle option.
+
+### Other changes
+
+- README "What sparked the idea" rewritten: the new starting point is Ann Cavoukian's October 2018 resignation from the Sidewalk Labs Quayside project in Toronto over data not de-identified at source (cited to Engadget and Global News). The earlier text about a portfolio review was removed. No such text was found in `docs/01-problem.md`.
+- Superseded PDFs in `docs/pdf` that still showed the old footer were deleted.
+
+### Safety
+
+- Lower loads on the pole: 52 N of panel wind load at 5.4 m instead of 170 N; the pole owner must still check it.
+- One LiFePO4 cell (about 19 Wh) at FieldNode's standard 1.5 A charge; the ESP32-S3 fallback would reintroduce two cells and 5 A and needs its own fusing and charger setting.
+- Privacy: 7.6 px/m at head height (8.5 px/m for a 2.0 m person) is the design's privacy guarantee. Any higher-resolution array or lower mounting height needs a fresh privacy review.
+
+### TRL 4
+
+TRL 4 remains on hold by Amish's instruction. Decided but on hold: profiling the fixed-point tracker on the STM32WL, I²C over the 2 m cable on a street pole, window transmission and array noise measurements, and any radar build or test. Nothing past TRL 3 was created.

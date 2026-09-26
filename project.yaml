@@ -9,6 +9,7 @@ trl_evidence:
   - docs/02-concept.md
   - docs/03-requirements.md
   - docs/decisions/0001-trl2-review-decisions.md
+  - docs/decisions/0002-recommendations-accepted.md
   - docs/04-calcs/01-sizing.md
   - docs/04-calcs/sizing.py
   - cad/src/model.py
@@ -21,7 +22,7 @@ pitch: >-
   A privacy-safe counter for people, bicycles and vehicles at street level that uses on-device detection and sends only counts, never images.
 problem: >-
   Cities plan streets with little data on walking and cycling, and camera-based counting raises privacy concerns.
-budget_usd: 150
+budget_usd: 275
 difficulty: 3  # 1 easiest, 5 hardest
 hero_image: media/hero.png
 licenses:

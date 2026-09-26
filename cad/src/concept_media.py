@@ -54,7 +54,6 @@ STYLE = {  # key: (color, exploded offset in world mm)
     "housing": ("#0F766E", scr(420, 260, 0)),
     "window": ("#FDE68A", scr(420, -280, 0)),
     "array": ("#7C3AED", scr(650, -150, 0)),
-    "esp": ("#2563EB", scr(650, 100, 0)),
     "cable": ("#111827", scr(200, -350, 250)),
     "notice": ("#F59E0B", scr(-620, -60, 0, dz=1000)),
 }
@@ -104,24 +103,24 @@ def data_and_energy_flow(out):
 
     ax.text(0.15, 1.25, "Data: counts leave the device, images never do", fontsize=9.5, fontweight="bold", color=INK)
     row(0.2, [("Thermal array", "32 x 24 px, 8 frames/s\nabout 12 kB/s in RAM"),
-              ("Edge tracker", "blobs, tracks, class\nand direction"),
-              ("15 min count bins", "3 classes x 2 directions\n14 bytes per bin"),
-              ("LoRaWAN uplink", "96 uplinks/day, 1.3 kB/day\n0.23 s each at SF9"),
+              ("Tracker on the STM32WL", "blobs, tracks, class\nand direction"),
+              ("15 min count bins", "3 classes x 2 directions\n10 bytes per bin"),
+              ("LoRaWAN uplink", "96 uplinks/day, 0.96 kB/day\n0.21 s each at SF9"),
               ("TwinKit or city server", "counts and device\nhealth only")],
         [7, 4, 1.5, 1.5])
     branch(0, 0.2, "Frames overwritten in RAM\nabout 1 GB/day, never stored or sent")
     branch(1, 0.2, "Track data deleted\nafter each count")
 
-    ax.text(0.15, -2.55, "Winter energy per day (estimates, CBC-CAL-001; 0.27 W average from the cells)", fontsize=9.5,
+    ax.text(0.15, -2.55, "Winter energy per day (estimates, CBC-CAL-001; 0.10 W average from the cell)", fontsize=9.5,
             fontweight="bold", color=INK)
-    row(-3.6, [("20 W panel", "30 Wh/day nominal\nat 1.5 sun hours"),
-               ("MPPT charger", "18 Wh/day in\n15.3 Wh/day out"),
-               ("LiFePO4 cells, 2 x 6 Ah", "14.5 Wh/day stored\n30.7 Wh usable, 4.8 days"),
-               ("Counter load", "6.4 Wh/day\nprocessor 68 %, array 32 %")],
+    row(-3.6, [("6 W panel (FieldNode)", "9 Wh/day nominal\nat 1.5 sun hours"),
+               ("MPPT charger", "5.4 Wh/day in\n4.6 Wh/day out"),
+               ("LiFePO4 cell, 6 Ah", "4.4 Wh/day stored\n15.4 Wh usable, 6.2 days"),
+               ("Counter load", "2.5 Wh/day\narray 82 %, tracking 18 %")],
         [7, 4.5, 3])
-    branch(0, -3.6, "Street shade, dust, heat\n40 % derating, 12 Wh")
-    branch(1, -3.6, "Charger 15 %, 2.7 Wh\ncharging 5 %, 0.8 Wh")
-    branch(2, -3.6, "Winter surplus 8.1 Wh/day\n(refills 3 dark days in 2.4 days)")
+    branch(0, -3.6, "Street shade, dust, heat\n40 % derating, 3.6 Wh")
+    branch(1, -3.6, "Charger 15 %, 0.8 Wh\ncharging 5 %, 0.2 Wh")
+    branch(2, -3.6, "Winter surplus 1.9 Wh/day\n(refills 3 dark days in 3.9 days)")
 
     fig.text(0.01, 0.97, "CurbCount: data and energy flow", fontsize=10, fontweight="bold", color=INK, va="top")
     fig.text(0.01, 0.93, "CONCEPT, NOT FOR FABRICATION. Values are estimates from CBC-CAL-001.",
@@ -134,16 +133,16 @@ if __name__ == "__main__":
     os.chdir(ROOT)
     concept.ROOT = ROOT
     render_all(
-        parts, project="CurbCount", title="Privacy-safe street counter concept", dwg_no="CBC-DWG-010", rev="P2",
+        parts, project="CurbCount", title="Privacy-safe street counter concept", dwg_no="CBC-DWG-010", rev="P3",
         key_figures=["Thermal array 32 x 24 px, 110 deg across the street",
                      f"Footprint {D['fp_x_min'] / 1000:.1f} to {D['fp_x_max'] / 1000:.1f} m across, 6 to 7 m along",
                      "Counts people, bikes, vehicles; 15 min bins",
-                     "No images leave the device; 8.5 px/m at head height",
-                     "0.27 W from cells; 4.8 days without sun",
-                     "Parts $290 vs $150 budget (indicative)"],
+                     "No images leave the device; 7.6 px/m at head height",
+                     "0.10 W from the cell; 6.2 days without sun",
+                     "Parts $253 vs $275 budget (indicative)"],
         date="2026-09-25",
         scale_figure=False, context=context,
-        cut_exclude=["Solar panel, 20 W", "Panel pole-top mount", "Band clamps (4), enclosure saddle",
+        cut_exclude=["Solar panel, 6 W", "Panel pole-top mount", "Band clamps (4), enclosure saddle",
                      "Sensor cable, M12", "Public notice plate"],
     )
     data_and_energy_flow(ROOT / "media" / "flow.png")

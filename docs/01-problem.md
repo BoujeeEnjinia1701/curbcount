@@ -3,7 +3,7 @@ doc_id: CBC-PRB-001
 title: CurbCount problem statement
 project: CurbCount
 doc_type: Problem statement
-version: "0.3"
+version: "0.4"
 status: Draft
 date: '2026-09-25'
 author: Amish Chadha
@@ -21,6 +21,10 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: TRL 3 update; cost constraint and open questions reflect CBC-CAL-001 and CBC-DDR-001
+- version: "0.4"
+  date: '2026-09-25'
+  author: Amish Chadha
+  change: Recommendations accepted by Amish (DDR-002)
 ---
 
 # CurbCount problem statement
@@ -52,7 +56,7 @@ Operating context: mounted on an existing street pole at 4 to 5 m, outdoors for 
 
 ## Constraints
 
-- Garage-buildable prototype, $150 USD in parts per the current budget. The priced BOM comes to $290.00 (CBC-CAL-001); a budget of $275 is recommended and awaits Amish.
+- Garage-buildable prototype, $275 USD in parts, the budget Amish set on 2026-09-25 (CBC-DDR-002). The priced BOM comes to $253.00 (CBC-CAL-001 v0.2).
 - Built on the lab's shared **FieldNode** power and radio core, as the FieldNode README lists CurbCount among its intended users.
 - Privacy by design: no images, audio recordings or personal identifiers leave the device; only aggregate counts are stored or sent.
 - Clamp-on mounting with no drilling, welding or electrical connection to the pole.
@@ -85,6 +89,6 @@ This design is for communities the author is not part of, so requirements come f
 ## Open questions
 
 - Which partner and street first: a city transport department, a residents' group or a university? Proposed, awaiting Amish (no recommendation made).
-- Count interval: 15-minute bins, adopted as recommended for TRL 3 under Amish's 2026-09-25 instruction, open for his review (CBC-DDR-001 D5). A partner should confirm planners do not need a finer interval.
-- Public notice: a plate on each pole with a link to this repository, adopted as recommended for TRL 3 under Amish's 2026-09-25 instruction, open for his review (CBC-DDR-001 D7).
-- Hot climates: CBC-CAL-001 shows a thermal-only counter goes blind for much of a hot day. Which partner cities are hot enough to need the radar variant?
+- Count interval: 15-minute bins, decided by Amish on 2026-09-25 (CBC-DDR-001 D5). A partner should confirm planners do not need a finer interval.
+- Public notice: a plate on each pole with a link to this repository, decided by Amish on 2026-09-25 (CBC-DDR-001 D7).
+- Hot climates: CBC-CAL-001 shows a thermal-only counter goes blind for much of a hot day. Amish decided on 2026-09-25 that the thermal build is for temperate sites and that the radar variant is brought forward for any hot partner city (CBC-DDR-002). Which partner cities are hot enough to need it depends on the partner choice above.
