@@ -6,13 +6,21 @@
 
 A privacy-safe counter for people, bicycles and vehicles at street level that uses on-device detection and sends only counts, never images.
 
+![CurbCount concept](media/hero.png)
+
+[Interactive 3D model](media/viewer.html) · [Concept blueprint (PDF)](media/concept-blueprint.pdf) · [Review note](docs/REVIEW.md)
+
 ## Concept rationale
 
-Counts without images give planners evidence while respecting residents.
+Counts without images give planners evidence while respecting residents. CurbCount uses a 32 x 24 pixel thermal array instead of a camera: from 4.3 m up, each pixel covers about 0.3 m of ground, so the sensor cannot capture a face or a number plate even if its firmware were changed. An edge processor turns heat blobs into counts of people, cyclists and vehicles by direction, and only 15-minute counts leave the device.
+
+It is open and garage-buildable because trust is the point. A city, a residents' group or a researcher can read the firmware, inspect the hardware and build their own from off-the-shelf parts, clamped to an existing pole on the lab's shared FieldNode power and radio core.
 
 ## Burning platform
 
-Street redesign decisions are contested, and counts of people walking and cycling are usually missing.
+Street redesign decisions are contested, and counts of people walking and cycling are usually missing. Road crashes kill about 1.19 million people a year, and more than half are pedestrians, cyclists and motorcyclists; pedestrians alone are 23 % and cyclists 6 % ([WHO, 2023](https://www.who.int/news/item/13-12-2023-despite-notable-progress-road-safety-remains-urgent-global-issue)). WHO also reports that 80 % of the world's roads fail to meet pedestrian safety standards (same source), and 92 % of road deaths occur in low- and middle-income countries ([WHO fact sheet](https://www.who.int/news-room/fact-sheets/detail/road-traffic-injuries)).
+
+Fixing streets for people on foot and on bicycles needs evidence of how many use them, before and after a change. Motor traffic is counted routinely; walking and cycling rarely are, and the camera systems that could count them raise privacy concerns that stall deployment. The global goal of at least halving road deaths and injuries by 2030 ([WHO Global status report on road safety 2023](https://www.who.int/publications/i/item/9789240086517)) leaves little time.
 
 ## Where it could be used
 
@@ -20,17 +28,27 @@ Street redesign decisions are contested, and counts of people walking and cyclin
 
 | Industry | Use |
 | --- | --- |
-| _To be developed_ | |
+| Municipal transport planning | Before and after counts for new bike lanes, wider sidewalks and school streets |
+| Road safety engineering | Pedestrian and cyclist exposure at crossings, to turn crash counts into risk rates (with CrossSafe) |
+| Retail and business districts | Footfall by hour and day on high streets and markets |
+| Parks, trails and tourism | Use of promenades, greenways and trail heads without cameras |
+| Transit operators | Walking and cycling flows on station access routes |
+| Research and education | Open, reproducible active travel counts for universities and schools |
 
 ### By country or region
 
 | Country or region | Why it matters there |
 | --- | --- |
-| _To be developed_ | |
+| Sub-Saharan Africa | More than a billion people in Africa walk or cycle every day, about 56 minutes a day against a 43.9-minute global average, yet most countries lack policies and budgets for them ([UNEP](https://www.unep.org/resources/report/walking-and-cycling-africa-evidence-and-good-practice-inspire-action)) |
+| India | Road crashes took about 300,000 lives in 2016, and most of those dying are pedestrians, cyclists and motorcyclists ([WHO India](https://www.who.int/india/health-topics/road-safety)) |
+| Latin America and the Caribbean | In the Americas, motorcyclists, pedestrians and cyclists rose from 39 % to 47 % of road deaths between 2009 and 2021 ([PAHO](https://www.paho.org/en/topics/road-safety)) |
+| United States | 7,522 pedestrians were killed in 2022, 18 % of all traffic deaths ([NHTSA](https://crashstats.nhtsa.dot.gov/Api/Public/ViewPublication/813590)) |
+| England | Walking is 29 % of all trips and cycling 2 % ([Department for Transport, 2024](https://www.gov.uk/government/statistics/walking-and-cycling-statistics-england-2023)); councils need counts to justify active travel schemes |
+| European Union | Data protection by design is a legal duty ([GDPR Article 25](https://gdpr-info.eu/art-25-gdpr/)), which favors counters that cannot capture personal data at all |
 
 ## What sparked the idea
 
-It came out of a September 2026 review of Design Molecule's applied research areas against the open projects already in the lab. It opens the smart city set.
+It came out of a September 2026 review of Design Molecule's applied research areas against the open projects already in the lab. It opens the smart city set. The wider trigger is the tightening rule set on sensing in public space: since 2 February 2025 the EU AI Act has prohibited real-time remote biometric identification in publicly accessible spaces for law enforcement, with narrow exceptions ([AI Act Article 5](https://artificialintelligenceact.eu/article/5/)), and cities need street data that stays clear of that line.
 
 ## Problem
 
@@ -40,20 +58,24 @@ Cities plan streets with little data on walking and cycling, and camera-based co
 
 A privacy-safe counter for people, bicycles and vehicles at street level that uses on-device detection and sends only counts, never images.
 
+A thermal array on a short arm looks down over the sidewalk, bike lane and nearest traffic lane; an edge processor tracks heat blobs and counts them by class and direction; and a FieldNode core with a 20 W panel and two LiFePO4 cells sends 15-minute counts over LoRaWAN to TwinKit or any LoRaWAN server. First-order estimates (to be checked at TRL 3): about 0.30 W continuous, about 4 days of counting without sun, a footprint about 12 m along the street and 7 m across, about 4.2 kg on the pole and about $271 in parts, well above the $150 budget. Coverage of sidewalks wider than about 2 m and counting in hot weather are not yet met; see the [requirements](docs/03-requirements.md).
+
 Full design precis: [docs/02-concept.md](docs/02-concept.md)
 
 ## Key components
 
-- Low-resolution thermal or radar sensor
-- Edge processor
-- FieldNode power and radio core
-- Pole mount
+- Low-resolution thermal array (32 x 24 px, 110 x 75° lens) behind an HDPE window; mmWave radar kept as an option
+- Edge processor (ESP32-S3 class) in the sensor head
+- FieldNode power and radio core, with a proposed 20 W panel and second LiFePO4 cell
+- Aluminum sensor arm and stainless band clamps for the pole mount
 
 The working bill of materials is in [bom/bom.csv](bom/bom.csv).
 
 ## Safety
 
 > Privacy by design: no images, audio recordings or personal identifiers leave the device; only aggregate counts or levels are stored. Check local data protection law before any deployment. Street furniture and pole mounts must be installed only with the asset owner's permission, by trained crews, with fall protection and traffic management as local rules require.
+>
+> The node contains LiFePO4 cells: fuse the pack and charge only within the cell maker's temperature limits. Fit safety lanyards to the panel and sensor head so nothing can fall on people below.
 
 ## Repository layout
 

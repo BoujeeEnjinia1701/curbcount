@@ -1,5 +1,14 @@
 item,qty,spec,supplier,unit_cost_usd,make_buy,notes
-Low-resolution thermal or radar sensor,,,,,,
-Edge processor,,,,,,
-FieldNode power and radio core,,,,,,
-Pole mount,,,,,,
+1 FieldNode enclosure,1,"IP65 polycarbonate box about 180 x 130 x 250 mm with membrane vent, cable gland and mounting rail (FieldNode standard)",FieldNode project; electrical distributor,22.00,buy,Indicative price; share of the FieldNode core estimated from the FieldNode README total of about $126
+2 FieldNode power and radio board,1,"MPPT charger with cold-charge lockout, STM32WL-class LoRaWAN module, switched sensor rails, SPI flash, two M12 sensor ports",FieldNode project,45.00,make,Indicative price; share of the FieldNode core (estimate)
+3 LiFePO4 cells,2,"3.2 V 6 Ah, 32700 size, fused, with holder",Battery distributor,18.00,buy,Indicative price; one cell is FieldNode standard and one is added (proposed awaiting Amish)
+4 Solar panel,1,"20 W monocrystalline, about 540 x 350 x 25 mm, Vmp about 18 V",Regional solar distributor,30.00,buy,Indicative price; replaces FieldNode's 6 W panel (proposed awaiting Amish)
+5 Panel tilt bracket,1,"Pole-top cap, post and hinge plate, about 35 degree tilt, galvanized steel",Local fabricator,10.00,make,Indicative material cost; adapted from the FieldNode bracket
+6 Stainless band clamps,4,"Stainless band clamps for 60 to 140 mm poles, with rubber liners",Hardware supplier,3.00,buy,Indicative price; no drilling of the pole
+7 Sensor arm,1,"40 x 40 x 2 mm aluminum square tube about 450 mm with saddle plate",Local metal supplier,15.00,make,Indicative material cost
+8 Sensor head housing,1,"3D-printed ASA shell about 110 x 90 x 70 mm with sun hood and gasket, tilted 10 degrees",Local print,8.00,make,Indicative material cost; UV-stable plastic
+9 LWIR window,1,"0.5 mm HDPE film about 100 x 80 mm, clamped with gasket",Plastics supplier,2.00,buy,Indicative price; infrared transmission to be measured at TRL 3
+10 Thermal array,1,"MLX90640 class, 32 x 24 px, 110 x 75 degree lens, I2C breakout",Electronics distributor,65.00,buy,Indicative price; mmWave radar variant is an open option (proposed awaiting Amish)
+11 Edge processor,1,"ESP32-S3 class module with PSRAM, own radio disabled in firmware",Electronics distributor,12.00,buy,Indicative price; STM32WL-only option to study at TRL 3
+12 Sensor cable,1,"M12 sealed cable about 1.5 m, FieldNode sensor port pinout",Electronics distributor,8.00,buy,Indicative price
+13 Hardware and consumables,1,"Stainless fasteners, safety lanyards, cable ties, UV-stable tape",Local hardware shop,6.00,buy,Indicative price; no exploded-view callout
