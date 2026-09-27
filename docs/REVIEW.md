@@ -212,3 +212,35 @@ Every link in the README's rationale, burning platform, use tables and inspirati
 | README, Sub-Saharan Africa row | "43.9-minute global average" | "about 44 minutes", as the UNEP page states it |
 
 No country rows were replaced; all six are supported by their cited primary sources. `docs/01-problem.md` is now CBC-PRB-001 v0.5 ("Stronger sources").
+
+## Session 2026-09-26: product appearance model and photoreal renders
+
+Amish chose this repo for the first batch of product renders on 2026-09-26.
+
+### What was done
+
+- `cad/src/product_model.py` (new): a product appearance model for photoreal renders. `product_parts()` returns 60 parts (45 shell, 14 internal, 1 context), each with a colour, a render material, its BOM line and an exploded offset. `TITLE` and three `RENDER_VIEWS` are defined: `hero` (sidewalk side, front left, about 20 deg elevation, with a short pole section), `exploded` (same side, about 28 deg) and `detail` (street side, front right, about 14 deg, without the pole). Every dimension and interface comes from `PARAMS`, `derived()` and `build_parts()` in `cad/src/model.py`, which was not edited.
+- What the appearance model adds over the massing model:
+  - Sensor head: filleted ASA housing with a parting step to a dark window bezel and gasket, the HDPE window in its slot, the thermal array breakout, can and lens visible through the window, a filleted sun hood, a teal "COUNTS ONLY" plaque and a lit status light.
+  - Arm: rounded 40 x 40 mm tube with a black end cap, filleted saddle plate, two bolts to the head.
+  - Band clamps: stainless bands with worm-drive housings and screws; the arm bands pass over the saddle face.
+  - FieldNode enclosure: filleted body with a lid parting step, lid with a shallow panel, four screws, a "CurbCount / FieldNode core" label and a lit status light; knurled M12 ports, a blanking cap, an M16 gland, an ePTFE vent and the whip antenna on its base.
+  - Internals: power and radio board with components, controller with its STM32WL module shield, the LiFePO4 cell in a fused holder.
+  - Solar panel with aluminium frame, cell grid, glass and junction box; pole-top sleeve with three set screws, post and hinge plate.
+  - Sensor cable on the model.py route with rounded bends.
+  - Public notice plate with a teal header and raised text: "PRIVACY-SAFE COUNTER", "Counts people, bikes and vehicles on the device.", "No images are taken or stored.", "Only counts are sent." and the repository link.
+- `README.md`: hero image now points to `media/render-hero.png`, and the links line starts with the exploded render. The render files are produced separately by the orchestrator.
+- Matplotlib self-check previews were made outside the repo (clear parts left out).
+
+### Where the appearance model differs from model.py (Proposed, awaiting Amish)
+
+1. **Pole top drawn 560 mm lower in the renders.** The sleeve, post, hinge plate and 6 W panel are moved down by `TOP_DROP` = 560 mm so the device fills the frame; installed, the pole top is at 5.15 m above the road. The hero caption says the pole top is drawn closer than installed. Recommendation: accept as a render-only layout; model.py, the drawing and the calculations keep the installed height.
+2. **Notice plate drawn at 4.15 m instead of 2.6 m.** It sits between the enclosure saddle and the arm clamps (`NOTICE_Z`) so it appears in the product shot. Recommendation: accept for renders only; keep the installed height at eye level (2.6 m) as model.py gives.
+3. **Notice plate wording and fixing.** The raised wording above is a proposal that meets BOM line 12 (what is counted, no images kept, repository link). The plate is shown riveted at its corners; model.py does not define the fixing. Recommendation: adopt the wording; decide the fixing (bands or rivets to a strap) at TRL 4.
+4. **Status light on the sensor head.** Not in the BOM or the power budget. Options: drop it (the enclosure light already shows the device is running), or keep it as a public "counting" cue at about 1 mW average with a low duty cycle. Recommendation: drop it from the design and remove it from the appearance model unless Amish wants the public cue.
+5. **Head "COUNTS ONLY" plaque and enclosure label.** Not separate BOM items. Recommendation: print or emboss the head plaque into the ASA housing (BOM line 8) and treat the enclosure label as part of BOM line 1.
+6. **Window bezel and head bolts.** The massing model shows the housing open underneath with no clamp frame and does not define how the head fixes to the arm. The appearance model shows a 6 mm bezel frame taken from the 70 mm housing height (overall height unchanged) and two bolts through the arm into the hood. Recommendation: accept both as appearance intent; detail them at TRL 4.
+
+### TRL
+
+This is an appearance model only: no tolerances, no fabrication detail, no PCB layout. `trl` stays 3 in `project.yaml`. TRL 4 remains on hold by Amish's instruction, and nothing past TRL 3 was created.
