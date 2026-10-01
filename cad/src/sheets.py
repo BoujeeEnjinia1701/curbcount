@@ -52,8 +52,9 @@ def ortho_cells(sheet, views, names=("front", "top", "right")):
     dims = {n: _viewbox(Path(views[n]).read_text())[2:] for n in names}
     fw, fh = dims["front"]; tw, th = dims["top"]; rw, rh = dims["right"]
     k = sheet.scale
-    ax += (aw - (k * (max(fw, tw) + rw) + gap)) / 2
-    ay += (ah - (k * (th + max(fh, rh)) + gap + 2 * lab)) / 2
+    dl = 11  # room the kit leaves left of and above the views for overall dimensions
+    ax += (aw - (k * (max(fw, tw) + rw) + gap + dl)) / 2 + dl
+    ay += (ah - (k * (th + max(fh, rh)) + gap + 2 * lab + dl)) / 2 + dl
     colw = k * max(fw, tw)
     front_y = ay + k * th + lab + gap
     row_h = k * max(fh, rh)
@@ -99,11 +100,12 @@ def main():
     asm = Compound(children=[v for kk, v in parts.items() if kk != "notice"] + [pole])
     views = safe_project_views(asm, work)
     bb = asm.bounding_box()
-    s = Sheet(project="CurbCount", title="General arrangement", dwg_no="CBC-DWG-001", rev="P2",
+    s = Sheet(project="CurbCount", title="General arrangement", dwg_no="CBC-DWG-001", rev="P3",
               author="Amish Chadha", date=DATE, scale=None, theme="technical",
               material="Aluminium mounts, ASA head; bought-in parts per bom/bom.csv. PRELIMINARY, NOT FOR FABRICATION",
               revisions=[("P1", "Preliminary GA for TRL 3 (from cad/src/model.py)", DATE, "AC"),
-                         ("P2", "DDR-002: 6 W panel, one cell, no head processor", DATE, "AC")])
+                         ("P2", "DDR-002: 6 W panel, one cell, no head processor", DATE, "AC"),
+                         ("P3", "Layout and labels tidied", DATE, "AC")])
     s.add_ortho(views)
     k = s.scale
     c = ortho_cells(s, views)
@@ -113,8 +115,9 @@ def main():
     x, y, w, h = c["front"]
     X = lambda mx: x + (mx - bb.min.X) * k
     Z = lambda mz: y + h - (mz - bb.min.Z) * k
-    L.append(_t(X(P["pole_x"]) + 5, Z(z_cut) - 2, "POLE CONTINUES TO SIDEWALK", 1.9, 400, MUTED, "start"))
-    xl = X(bb.min.X) - 5
+    L.append(_t(X(P["pole_x"]) + D["pole_r"] * k + 2, Z(z_cut) - 2, "POLE CONTINUES TO SIDEWALK", 1.9, 400, MUTED, "start"))
+    xr_lab = c["right"][0] + (bb.max.Y - bb.min.Y) * k + 8
+    xl = X(bb.min.X) - 13
     L += [ext(X(D["enc_xc"]), Z(D["enc_top"]), xl - 1, Z(D["enc_top"])), ext(X(D["enc_xc"]), Z(D["enc_bot"]), xl - 1, Z(D["enc_bot"]))]
     L += dim_v(xl, Z(D["enc_top"]), Z(D["enc_bot"]), f"{P['enc'][2]:.0f}")
     L += [ext(X(P["pole_x"]), Z(D["arm_z"]), xl - 8, Z(D["arm_z"])), ext(X(D["enc_xc"]), Z(P["enc_zc"]), xl - 8, Z(P["enc_zc"]))]
@@ -122,13 +125,14 @@ def main():
     zt = D["arm_z"] + 180
     L += [ext(X(P["pole_x"]), Z(D["arm_z"]) - 2, X(P["pole_x"]), Z(zt) - 1), ext(X(P["head_x"]), Z(D["head_zc"]) - 2, X(P["head_x"]), Z(zt) - 1)]
     L += dim_h(X(P["pole_x"]), X(P["head_x"]), Z(zt), f"{D['reach']:.0f} reach")
-    L += leader(X(P["head_x"]), Z(P["window_z"]), X(P["head_x"]) + 6, Z(P["window_z"] - 250),
-                f"WINDOW {P['window_z']:.0f} ABOVE ROAD, TILT {P['tilt']:.1f} DEG")
-    L += leader(X(P["pole_x"] + 150), Z(D["arm_z"]), X(P["pole_x"] - 150), Z(D["arm_z"] + 260),
+    L += leader(X(P["head_x"]), Z(P["window_z"]), xr_lab - 1, Z(P["window_z"] - 250),
+                f"WINDOW {P['window_z']:.0f} ABOVE ROAD,")
+    L.append(_t(xr_lab, Z(P["window_z"] - 250) + 3.8, f"TILT {P['tilt']:.1f} DEG", 2.1, 400, INK, "start"))
+    L += leader(X(P["pole_x"] + 150), Z(D["arm_z"]), X(P["pole_x"] - 150) - 9, Z(D["arm_z"] + 260),
                 f"ARM AXIS {D['arm_z']:,.0f} ABOVE ROAD", "end")
-    L += leader(X(D["panel_c"][0]), Z(D["panel_c"][2]), X(D["panel_c"][0]) + 20, Z(D["panel_top"] + 40),
-                f"PANEL TOP {D['panel_top']:,.0f} ABOVE ROAD")
-    L += leader(X(D["enc_xc"]), Z(D["enc_bot"] - 80), X(D["enc_xc"]) - 4, Z(D["enc_bot"] - 250), "M12 PORTS, ANTENNA DOWN", "end")
+    L += leader(X(D["panel_c"][0]), Z(D["panel_c"][2]), X(D["panel_c"][0]) - 20, Z(D["panel_top"] + 40),
+                f"PANEL TOP {D['panel_top']:,.0f} ABOVE ROAD", "end")
+    L += leader(X(D["enc_xc"]), Z(D["enc_bot"] - 80), X(D["enc_xc"]) - 14, Z(D["enc_bot"] - 250), "M12 PORTS, ANTENNA DOWN", "end")
 
     # right view (from +X): Y across the sheet
     x, y, w, h = c["right"]
@@ -138,8 +142,8 @@ def main():
     L += dim_h(Yr(-pl / 2), Yr(pl / 2), Zr(D["panel_top"] + 100), f"{pl:.0f}")
     L += [ext(Yr(-pl / 2), Zr(D["panel_top"] - 50), Yr(-pl / 2), Zr(D["panel_top"] + 110)),
           ext(Yr(pl / 2), Zr(D["panel_top"] - 50), Yr(pl / 2), Zr(D["panel_top"] + 110))]
-    L.append(_t(Yr(bb.max.Y) + 3, Zr(P["window_z"]), "ARRAY: 110 DEG ACROSS,", 1.9, 400, INK, "start"))
-    L.append(_t(Yr(bb.max.Y) + 3, Zr(P["window_z"]) + 3, "75 DEG ALONG THE STREET", 1.9, 400, INK, "start"))
+    L.append(_t(Yr(bb.max.Y) + 8, Zr(P["window_z"]), "ARRAY: 110 DEG ACROSS,", 1.9, 400, INK, "start"))
+    L.append(_t(Yr(bb.max.Y) + 8, Zr(P["window_z"]) + 3, "75 DEG ALONG THE STREET", 1.9, 400, INK, "start"))
 
     s._layers += L
     s.add_svg(views["iso"], 276, 32, 140, 100, label="Isometric view", sublabel="Not to scale")
