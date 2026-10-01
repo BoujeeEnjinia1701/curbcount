@@ -3,9 +3,9 @@ doc_id: CBC-PRC-001
 title: CurbCount design precis
 project: CurbCount
 doc_type: Design precis
-version: "0.4"
+version: "0.5"
 status: Draft
-date: '2026-09-25'
+date: '2026-09-30'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -25,11 +25,15 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Recommendations accepted by Amish (DDR-002)
+- version: "0.5"
+  date: '2026-09-30'
+  author: Amish Chadha
+  change: "Design for construction (CBC-DDR-003): saddles, arm brackets, head fixing and a bolted pole-top mount; mass, cost and wind figures from CBC-CAL-001 v0.3"
 ---
 
 # CurbCount design precis
 
-CurbCount is a clamp-on street pole counter. A 32 x 24 pixel thermal array looks down from 4.3 m over the sidewalk, bike lane and nearest traffic lane; FieldNode's STM32WL turns the heat blobs into counts of people, cyclists and vehicles by direction and sends only 15-minute counts over LoRaWAN. The sensor images a person's head at 7.6 px/m (8.5 px/m for a 2.0 m person), far below what is needed to recognize anyone, so privacy does not depend on the firmware. The calculations in CBC-CAL-001 v0.2 show that on standard FieldNode power (one cell, 6 W panel) it can count for 6.2 days without sun and stay energy neutral in winter, weighs 4.44 kg on the pole and costs $253.00 in parts against the $275 budget. A thermal-only counter goes blind for much of a hot day, so this build is for temperate sites; hot-climate sites use the radar variant (CBC-DDR-002).
+CurbCount is a clamp-on street pole counter. A 32 x 24 pixel thermal array looks down from 4.3 m over the sidewalk, bike lane and nearest traffic lane; FieldNode's STM32WL turns the heat blobs into counts of people, cyclists and vehicles by direction and sends only 15-minute counts over LoRaWAN. The sensor images a person's head at 7.6 px/m (8.5 px/m for a 2.0 m person), far below what is needed to recognize anyone, so privacy does not depend on the firmware. The calculations in CBC-CAL-001 v0.3 show that on standard FieldNode power (one cell, 6 W panel) it can count for 6.2 days without sun and stay energy neutral in winter, weighs 5.26 kg on the pole and costs $274.00 in parts against the $275 budget. A thermal-only counter goes blind for much of a hot day, so this build is for temperate sites; hot-climate sites use the radar variant (CBC-DDR-002).
 
 ![Figure 1. CurbCount on a street pole with a 1.75 m person for scale; the teal area is the calculated sensing footprint](../media/hero.png)
 
@@ -49,13 +53,13 @@ Table 1. Main components. Numbers match the exploded view (Figure 3), `bom/bom.c
 
 | # | Component | Choice | Notes |
 | --- | --- | --- | --- |
-| 1 | FieldNode enclosure with ports and antenna | IP65 polycarbonate, 150 x 90 x 200 mm, two M12 5-pin ports and the whip on the bottom face | From FieldNode (FND-PRC-001 v0.3), unchanged |
+| 1 | FieldNode enclosure with ports and antenna | IP65 polycarbonate, 150 x 90 x 200 mm on four lugs, two M12 5-pin ports, two glands, vent and the whip in two rows on the bottom face | FieldNode's constructable core (FND-DDR-003), unchanged |
 | 2 | FieldNode power and radio board | MPPT charger with cold-charge lockout, STM32WL-class LoRaWAN module, switched sensor rails; also runs the tracker | From FieldNode, standard charger setting (DDR-002) |
 | 3 | LiFePO4 cell | One 3.2 V 6 Ah cell, FieldNode standard | Standard FieldNode power (DDR-002) |
 | 4 | Solar panel | 6 W, 290 x 200 mm, 9 V class, FieldNode standard | Standard FieldNode power (DDR-002) |
-| 5 | Panel pole-top mount | Aluminium sleeve over the pole top, 42.4 mm post, hinge plate 140 x 160 mm at 35 degrees | Hinge plate resized for the 6 W panel |
-| 6 | Band clamps and enclosure saddle | Four 12 mm stainless bands for 60 to 140 mm poles, aluminium saddle plate | No drilling; FieldNode's V-blocks fit only 40 to 60 mm poles |
-| 7 | Sensor arm | 40 x 40 x 2 mm aluminium tube, 512 mm, on a saddle plate; head 530 mm from the pole axis | Keeps the head clear of the pole |
+| 5 | Panel pole-top mount | Aluminium sleeve with set screws over the pole top, cap disc, 42.4 mm post on angle clips, rail plate 290 x 150 mm at 35 degrees; all bolted | Panel bolted through its frame lip (CBC-DDR-003) |
+| 6 | Band clamps and enclosure saddle | Four 12 mm stainless bands through slots in the saddle plates, aluminium saddle plate on two bent V-saddles, for 60 to 140 mm poles | No drilling; FieldNode's V-blocks fit only 40 to 60 mm poles |
+| 7 | Sensor arm | 40 x 40 x 2 mm aluminium tube, 498 mm, bolted to a saddle plate on V-saddles by two angle brackets; head 530 mm from the pole axis | Keeps the head clear of the pole |
 | 8 | Sensor head housing | 3D-printed ASA, 110 x 90 x 70 mm, with a sun hood | View tilted 7.5 degrees toward the road |
 | 9 | Window | 0.5 mm HDPE film, about 0.75 transmission at 8 to 14 µm (estimate) | Far cheaper than germanium; to be measured |
 | 10 | Thermal array | MLX90640 class, 32 x 24 px, 110 x 75 degree lens, 110 degree axis across the street; read over I²C by the STM32WL | DDR-001 D2; radar is the hot-climate variant (DDR-002) |
@@ -68,11 +72,11 @@ The separate ESP32-S3 edge processor of v0.3 is removed (DDR-002). It stays on p
 
 ![Figure 4. Cutaway: sensor head with array and window (top right); FieldNode enclosure with cell and board (bottom left)](../media/cutaway.png)
 
-The parametric model is `cad/src/model.py` (STEP and STL in `cad/step/` and `cad/stl/`), and the general arrangement is drawing [CBC-DWG-001](../cad/drawings/CBC-DWG-001.pdf).
+The parametric model is `cad/src/model.py` (STEP and STL in `cad/step/` and `cad/stl/`), and the general arrangement is drawing [CBC-DWG-001](../cad/drawings/CBC-DWG-001.pdf). Every part can be made in a small workshop and every joint is bolted (design for construction, CBC-DDR-003); the illustrated [prototype build plan](05-build-plan.md) (CBC-BLD-001) shows how, and open decisions are in the [design decisions register](06-design-decisions.md).
 
 ## Key numbers
 
-Table 2. Key numbers from CBC-CAL-001 v0.2. Tags refer to lines of `docs/04-calcs/sizing.py` output.
+Table 2. Key numbers from CBC-CAL-001 v0.3. Tags refer to lines of `docs/04-calcs/sizing.py` output.
 
 | Quantity | Value | Requirement |
 | --- | --- | --- |
@@ -85,9 +89,9 @@ Table 2. Key numbers from CBC-CAL-001 v0.2. Tags refer to lines of `docs/04-calc
 | Autonomy | 6.22 days; 4.36 days at -20 °C [E2] | R8 met on paper |
 | Winter harvest, 6 W | 4.4 Wh/day, 1.77 times the draw [E3] | R9 met on paper |
 | Uplink | 10 bytes per 15 min; 206 ms at SF9, 0.82 s/h; 371 ms at US915 DR0 [G1, G2] | R5 met; R15 met on paper |
-| Wind on panel | 52 N at 35 m/s; post factor 38 [H1] | R12 |
-| Mass on the pole | 4.44 kg [H5] | R11 met on paper |
-| Parts cost | $253.00 against $275 [J1] | R13 met on paper |
+| Wind on panel | 52 N at 35 m/s; post factor 55 [H1] | R12 |
+| Mass on the pole | 5.26 kg [H5] | R11 met on paper |
+| Parts cost | $274.00 against $275 [J1] | R13 met on paper (thin margin) |
 
 Counts will still run low where parked vans, trees and awnings hide the footprint, and where people walk side by side.
 
@@ -105,7 +109,7 @@ All choices below were decided by Amish on 2026-09-25 (CBC-DDR-001 and CBC-DDR-0
 
 ## Safety
 
-> **Safety:** Installing on a street pole is work at height next to traffic. Install only with the pole owner's permission, by trained crews, with fall protection and traffic management as local rules require. Keep clear of overhead power lines and street-light wiring, and never open a pole's electrical hatch. The pole owner must check that the pole can carry the extra 52 N wind load at 5.4 m.
+> **Safety:** Installing on a street pole is work at height next to traffic. Install only with the pole owner's permission, by trained crews, with fall protection and traffic management as local rules require. Keep clear of overhead power lines and street-light wiring, and never open a pole's electrical hatch. The pole owner must check that the pole can carry the extra 52 N wind load at 5.3 m.
 
 > **Safety:** The node contains one LiFePO4 cell, about 19 Wh. Keep its fuse, charge only within the cell maker's temperature limits (FieldNode's cold- and hot-charge lockout applies), and do not install a node with a swollen or damaged cell. The ESP32-S3 fallback would add a second cell and a 20 W panel that can deliver 5 A; that variant needs its own fusing and charger setting.
 

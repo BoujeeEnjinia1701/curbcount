@@ -1,4 +1,4 @@
-"""CurbCount sizing calculations, CBC-CAL-001 v0.2 (TRL 3, decisions of CBC-DDR-002 applied).
+"""CurbCount sizing calculations, CBC-CAL-001 v0.3 (TRL 3, CBC-DDR-002 and the design for construction CBC-DDR-003 applied).
 
 Run from the repo root:  python docs/04-calcs/sizing.py
 Prints every number that docs/04-calcs/01-sizing.md quotes, tagged [A1], [B2] and so on, and
@@ -13,7 +13,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "cad" / "src"))
-from model import PARAMS as P, derived, ray, ground_hit, footprint_outline, pixel_edges, build_parts  # noqa: E402
+from model import PARAMS as P, derived, ray, ground_hit, footprint_outline, pixel_edges, build_components  # noqa: E402
 
 D = derived(P)
 RESULTS = []
@@ -78,9 +78,10 @@ T_BAND, MU = 1000.0, 0.20                        # N preload per band (as FND-CA
 FY_AL, E_AL = 150.0, 69e3                        # MPa, 6063-T6 class
 RHO = {"al": 2.70e-6, "steel": 7.85e-6, "asa": 1.07e-6, "hdpe": 0.95e-6}   # kg/mm3
 # Bought-part masses, kg (FieldNode core from FND-CAL-001 [F1] less its panel, bracket and mount)
-M_FND_CORE = 0.43 + 0.08 + 0.15 + 0.03 + 0.05 + 0.02 + 0.06 + 0.06 + 0.03 + 0.01 + 0.10
+M_FND_CORE = 0.43 + 0.08 + 0.15 + 0.03 + 0.05 + 0.02 + 0.06 + 0.06 + 0.03 + 0.01 + 0.10 + 0.02   # + connector strip (FND-DDR-003)
 M_BOUGHT = {"6 W panel (FieldNode, 0.55 kg per FND-CAL-001)": 0.55, "four bands": 0.20,
-            "thermal array breakout": 0.01, "M12 cable": 0.15, "hardware, lanyards": 0.15}
+            "thermal array breakout": 0.01, "M12 cable": 0.12, "hardware, lanyards": 0.25,
+            "panel extension lead": 0.06, "rivet nuts, set screws, gland, ties, end cap": 0.07}
 M_FALLBACK = 0.18 + 1.90 - 0.55 + 0.02           # kg added by the ESP32-S3 fallback: second cell, 20 W panel, processor board
 PED_LIMIT = 8.0                                  # px/m at head height, restated R4 target (CBC-DDR-002)
 
@@ -390,18 +391,19 @@ s_arm = M_arm * 1000 / (I_arm / (a_ / 2))
 defl = F_head * D["arm_len"] ** 3 / (3 * E_AL * I_arm) + F_arm * D["arm_len"] ** 3 / (8 * E_AL * I_arm)
 out("H4", f"arm 40 x 40 x 2: bending {s_arm:.1f} MPa against {FY_AL:.0f}; tip deflection {defl:.2f} mm, "
           f"{math.degrees(defl / D['arm_len']):.3f} deg of aim")
-parts = build_parts(P)
-vol = {k: v.volume for k, v in parts.items()}
-m_made = {"sensor arm and saddle (Al)": vol["arm"] * RHO["al"], "pole-top mount (Al)": vol["mount"] * RHO["al"],
-          "enclosure saddle plate (Al)": P["enc_plate"][0] * P["enc_plate"][1] * P["enc_plate"][2] * RHO["al"],
-          "head housing and hood (ASA)": vol["housing"] * RHO["asa"], "notice plate (Al)": vol["notice"] * RHO["al"]}
+COMP = build_components(P)
+vol = lambda *ks: sum(COMP[k].shape.volume for k in ks)  # noqa: E731
+m_made = {"sensor arm, saddle plate, V-saddles, brackets (Al)": vol("arm_tube", "arm_plate", "arm_vs_up", "arm_vs_low", "arm_brk_up", "arm_brk_low") * RHO["al"],
+          "pole-top mount (Al)": vol("sleeve", "disc", "post", "plugs", "lclip_r", "lclip_l", "uclip_r", "uclip_l", "rail") * RHO["al"],
+          "enclosure saddle plate and V-saddles (Al)": vol("enc_plate", "enc_vs_up", "enc_vs_low") * RHO["al"],
+          "head housing, hood, wedge pad and window frame (ASA)": vol("housing", "frame") * RHO["asa"], "notice plate (Al)": vol("notice") * RHO["al"]}
 m_total = M_FND_CORE + sum(M_BOUGHT.values()) + sum(m_made.values())
 out("H5", f"mass: FieldNode core {M_FND_CORE:.2f} kg; " + ", ".join(f"{k} {v:.2f}" for k, v in m_made.items())
           + "; bought " + ", ".join(f"{k} {v:.2f}" for k, v in M_BOUGHT.items()) + f"; total {m_total:.2f} kg (ESP32-S3 fallback about {m_total + M_FALLBACK:.2f} kg)")
 res("R11", f"{m_total:.2f} kg", "6 kg or less", "Met on paper" if m_total <= 5.4 else ("At risk (within the 5 % uncertainty of the assumed masses)" if m_total <= 6.3 else "Not met"))
 tasks = [("Fit panel to the pole-top mount on the ground", 5), ("Raise, fit sleeve on the pole top, set screws, lanyard", 12),
-         ("Band the enclosure saddle and hang the FieldNode core", 8), ("Band the arm saddle, level the arm", 8),
-         ("Fit the head, lanyard, route and tie the cable", 10), ("Aim check on a laptop through the calibration jumper", 8),
+         ("Band the enclosure saddle plate, FieldNode core already on it", 8), ("Band the arm saddle plate, head already on the arm, level the arm", 8),
+         ("Head lanyard, route and tie the sensor cable and panel lead", 10), ("Aim check on a laptop through the calibration jumper", 8),
          ("Close up, confirm an uplink on a phone", 5), ("Fit the public notice plate", 3)]
 t_inst = sum(t for _, t in tasks)
 out("H6", "install (two people, mobile platform): " + "; ".join(f"{k} {t} min" for k, t in tasks) + f"; total {t_inst} min")

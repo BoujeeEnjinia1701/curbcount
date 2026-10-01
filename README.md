@@ -8,7 +8,7 @@ A privacy-safe counter for people, bicycles and vehicles at street level that us
 
 ![CurbCount: privacy-safe street counter for people, bikes and vehicles, product render](media/render-hero.png)
 
-[Exploded render](media/render-exploded.png) · [Detail render](media/render-detail.png) · [Interactive 3D model](media/viewer.html) · [Concept blueprint (PDF)](media/concept-blueprint.pdf) · [General arrangement (PDF)](cad/drawings/CBC-DWG-001.pdf) · [Calculations](docs/04-calcs/01-sizing.md) · [Review note](docs/REVIEW.md)
+[Exploded render](media/render-exploded.png) · [Detail render](media/render-detail.png) · [Interactive 3D model](media/viewer.html) · [Concept blueprint (PDF)](media/concept-blueprint.pdf) · [General arrangement (PDF)](cad/drawings/CBC-DWG-001.pdf) · [Prototype build plan](docs/05-build-plan.md) · [Design decisions](docs/06-design-decisions.md) · [Calculations](docs/04-calcs/01-sizing.md) · [Review note](docs/REVIEW.md)
 
 ## Concept rationale
 
@@ -58,7 +58,7 @@ Cities plan streets with little data on walking and cycling, and camera-based co
 
 A privacy-safe counter for people, bicycles and vehicles at street level that uses on-device detection and sends only counts, never images.
 
-A thermal array on a short arm looks down over the sidewalk, bike lane and nearest traffic lane; a standard FieldNode core (one LiFePO4 cell, 6 W panel) reads the array, tracks heat blobs in fixed-point firmware on its STM32WL, counts them by class and direction, and sends a 10-byte record every 15 minutes over LoRaWAN to TwinKit or any LoRaWAN server. The TRL 3 calculations ([CBC-CAL-001](docs/04-calcs/01-sizing.md)) give 0.10 W average from the cell, 6.2 days of counting without sun, a footprint 12.8 m across the street and 6 to 7 m along it, which covers a 3 m sidewalk, a 2 m bike lane and the nearest lane, 4.4 kg on the pole and $253.00 in parts against the $275 budget. No requirement is unmet on paper; three are at risk: counting fast cars (4.2 frames at 50 km/h), people walking close together, and counting on sunlit pavement. The thermal build is for temperate sites; a hot-climate city would use a radar variant. See the [requirements](docs/03-requirements.md) and the [decision record](docs/decisions/0002-recommendations-accepted.md).
+A thermal array on a short arm looks down over the sidewalk, bike lane and nearest traffic lane; a standard FieldNode core (one LiFePO4 cell, 6 W panel) reads the array, tracks heat blobs in fixed-point firmware on its STM32WL, counts them by class and direction, and sends a 10-byte record every 15 minutes over LoRaWAN to TwinKit or any LoRaWAN server. The TRL 3 calculations ([CBC-CAL-001](docs/04-calcs/01-sizing.md)) give 0.10 W average from the cell, 6.2 days of counting without sun, a footprint 12.8 m across the street and 6 to 7 m along it, which covers a 3 m sidewalk, a 2 m bike lane and the nearest lane, 5.3 kg on the pole and $274.00 in parts against the $275 budget. No requirement is unmet on paper; three are at risk: counting fast cars (4.2 frames at 50 km/h), people walking close together, and counting on sunlit pavement. The thermal build is for temperate sites; a hot-climate city would use a radar variant. See the [requirements](docs/03-requirements.md) and the [decision record](docs/decisions/0002-recommendations-accepted.md).
 
 Full design precis: [docs/02-concept.md](docs/02-concept.md)
 
@@ -70,6 +70,12 @@ Full design precis: [docs/02-concept.md](docs/02-concept.md)
 - Public notice plate on the pole
 
 The priced bill of materials is in [bom/bom.csv](bom/bom.csv); the parametric model is [cad/src/model.py](cad/src/model.py).
+
+## Building the prototype
+
+The [prototype build plan](docs/05-build-plan.md) shows how to build the first CurbCount, component by component, with a making sketch for each made part and a picture for every assembly step. Nothing is welded: the saddle plates seat on the pole through bent V-saddles and are held by band clamps, the arm and the pole-top mount are bolted from aluminium sheet, angle, bar and tube, and the sensor head and its window frame are 3D printed. The FieldNode core is built to FieldNode's own plan. Decisions still open are listed in the [design decisions register](docs/06-design-decisions.md).
+
+![CurbCount prototype: every component, pulled apart and numbered in build order](docs/05-build-plan/overview.png)
 
 ## Safety
 

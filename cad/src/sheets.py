@@ -1,4 +1,4 @@
-"""CurbCount general arrangement sheet CBC-DWG-001, Rev P2 (TRL 3, CBC-DDR-002 applied).
+"""CurbCount general arrangement sheet CBC-DWG-001, Rev P4 (TRL 3, constructable design of CBC-DDR-003).
 
 Run from the repo root:  python cad/src/sheets.py
 Writes cad/drawings/CBC-DWG-001.svg, .pdf and .png from the parametric model in cad/src/model.py
@@ -15,7 +15,7 @@ from build123d import Compound, Pos, Cylinder  # noqa: E402
 from drawing import Sheet, _viewbox, _t, M, TB_Y, INK, MUTED  # noqa: E402
 from model import PARAMS as P, build_parts, derived  # noqa: E402
 
-DATE = "2026-09-25"
+DATE = "2026-09-30"
 
 
 def safe_project_views(part, workdir, line_weight=0.35):
@@ -100,12 +100,13 @@ def main():
     asm = Compound(children=[v for kk, v in parts.items() if kk != "notice"] + [pole])
     views = safe_project_views(asm, work)
     bb = asm.bounding_box()
-    s = Sheet(project="CurbCount", title="General arrangement", dwg_no="CBC-DWG-001", rev="P3",
+    s = Sheet(project="CurbCount", title="General arrangement", dwg_no="CBC-DWG-001", rev="P4",
               author="Amish Chadha", date=DATE, scale=None, theme="technical",
               material="Aluminium mounts, ASA head; bought-in parts per bom/bom.csv. PRELIMINARY, NOT FOR FABRICATION",
-              revisions=[("P1", "Preliminary GA for TRL 3 (from cad/src/model.py)", DATE, "AC"),
-                         ("P2", "DDR-002: 6 W panel, one cell, no head processor", DATE, "AC"),
-                         ("P3", "Layout and labels tidied", DATE, "AC")])
+              revisions=[("P1", "Preliminary GA for TRL 3 (from cad/src/model.py)", "2026-09-25", "AC"),
+                         ("P2", "DDR-002: 6 W panel, one cell, no head processor", "2026-09-25", "AC"),
+                         ("P3", "Layout and labels tidied", "2026-09-25", "AC"),
+                         ("P4", "DDR-003: design for construction (saddles, brackets, bolted mount)", DATE, "AC")])
     s.add_ortho(views)
     k = s.scale
     c = ortho_cells(s, views)
@@ -146,14 +147,14 @@ def main():
     L.append(_t(Yr(bb.max.Y) + 8, Zr(P["window_z"]) + 3, "75 DEG ALONG THE STREET", 1.9, 400, INK, "start"))
 
     s._layers += L
-    s.add_svg(views["iso"], 276, 32, 140, 100, label="Isometric view", sublabel="Not to scale")
+    s.add_svg(views["iso"], 276, 44, 140, 90, label="Isometric view", sublabel="Not to scale")
     s.add_notes("Main dimensions and interfaces (mm)", [
         f"Pole {P['pole_od']} OD, {-P['pole_x']:.0f} behind the curb (site supplied, not in BOM)",
         f"Head {P['head'][0]:.0f} x {P['head'][1]:.0f} x {P['head'][2]:.0f}, window {P['window_z']:.0f} above road, tilt {P['tilt']} deg",
         f"Arm 40 x 40 x 2 Al, {D['arm_len']:.0f} long; reach {D['reach']:.0f} from pole axis",
         f"FieldNode enclosure {P['enc'][0]:.0f} x {P['enc'][1]:.0f} x {P['enc'][2]:.0f}, center {P['enc_zc']:.0f}",
         f"Panel 6 W (FieldNode) {P['panel'][0]:.0f} x {P['panel'][1]:.0f}, tilt {P['panel_tilt']:.0f} deg on a {P['sleeve'][0]:.0f} sleeve",
-        "Four 12 mm stainless bands; no drilling of the pole",
+        "Saddle plates on bent V-saddles; four 12 mm bands through slots; no drilling",
         "M12 5-pin cable, enclosure port to head (FieldNode pinout)",
         f"Footprint {D['fp_x_min'] / 1000:.1f} to {D['fp_x_max'] / 1000:.1f} m across the street (CBC-CAL-001)",
         f"Notice plate {P['notice'][1]:.0f} x {P['notice'][2]:.0f} at {P['notice_z']:.0f} (not drawn); lanyards on panel and head",

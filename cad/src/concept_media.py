@@ -56,6 +56,7 @@ STYLE = {  # key: (color, exploded offset in world mm)
     "array": ("#7C3AED", scr(650, -150, 0)),
     "cable": ("#111827", scr(200, -350, 250)),
     "notice": ("#F59E0B", scr(-620, -60, 0, dz=1000)),
+    "connectors": ("#A78BFA", scr(-700, 300, 350)),
 }
 parts = []
 for key, (num, name) in BOM.items():
@@ -133,14 +134,14 @@ if __name__ == "__main__":
     os.chdir(ROOT)
     concept.ROOT = ROOT
     render_all(
-        parts, project="CurbCount", title="Privacy-safe street counter concept", dwg_no="CBC-DWG-010", rev="P3",
+        parts, project="CurbCount", title="Privacy-safe street counter concept", dwg_no="CBC-DWG-010", rev="P4",
         key_figures=["Thermal array 32 x 24 px, 110 deg across the street",
                      f"Footprint {D['fp_x_min'] / 1000:.1f} to {D['fp_x_max'] / 1000:.1f} m across, 6 to 7 m along",
                      "Counts people, bikes, vehicles; 15 min bins",
                      "No images leave the device; 7.6 px/m at head height",
                      "0.10 W from the cell; 6.2 days without sun",
-                     "Parts $253 vs $275 budget (indicative)"],
-        date="2026-09-25",
+                     "Parts $274 vs $275 budget (indicative)"],
+        date="2026-09-30",
         scale_figure=False, context=context,
         cut_exclude=["Solar panel, 6 W", "Panel pole-top mount", "Band clamps (4), enclosure saddle",
                      "Sensor cable, M12", "Public notice plate"],

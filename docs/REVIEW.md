@@ -250,3 +250,59 @@ This is an appearance model only: no tolerances, no fabrication detail, no PCB l
 - Kit 1.5.0 synced: STANDARDS v1.5 (sections 12 to 15: product renders, storefront images and image quality, public release, authorship and signing), `.kit/cards.py`, `.kit/image_qc.py`, `.kit/release_gate.py`, issue templates, and the `/render-product` and `/release` commands. `CLAUDE.md` now matches `.kit/CLAUDE.md`.
 - Every `media/render-*.png` recaptioned from its original render with the new layout: the title, concept label and repository sit in a band above the render and the view note in a band below it, each line wrapped to the image width, so no text overlaps other text or the render or runs off the image. `media/card.png` and `media/social-preview.png` regenerated with the same rules.
 - `python .kit/image_qc.py` and `python .kit/release_gate.py` pass. trl stays 3.
+
+## Session 2026-09-30: build plan and design for construction (kit 1.7.0)
+
+On 2026-09-30 Amish approved the illustrated build plan format ("this is the correct build plan ... this is a good quality document format. Extend this across all the other repos"), asked that outstanding decisions go in a separate design decisions register, and wrote: "If you are realising that the design cannot be built as per concept - fix the design assumptions to match and be physically feasible as you draw the illustrations." This session applied that to CurbCount. The repo stays at `trl: 3`; nothing past TRL 3 was created.
+
+### What was done
+
+- Kit 1.7.0 installed (`.kit/`, `.claude/commands/`); `CLAUDE.md` now matches `.kit/CLAUDE.md`.
+- `cad/src/model.py` rewritten as a constructable model (every component with its fixings) with 106 build123d constructability checks (`python cad/src/model.py --check`); all pass. STEP and STL regenerated in `cad/step/` and `cad/stl/`.
+- `docs/decisions/0003-design-for-construction.md` (CBC-DDR-003 v0.1, Draft): every change below, with the reason; made under Amish's 2026-09-30 instruction to make the design physically buildable; open for his review.
+- `cad/src/build_plan_media.py` (new): overview, 16 making sketches (`cad/drawings/CBC-DWG-101` to `116`, SVG, PDF, PNG), three hole layouts, 13 joint close-ups, 17 assembly step pictures and a wiring diagram, all in `docs/05-build-plan/`.
+- `docs/05-build-plan.md` (CBC-BLD-001 v0.1): the illustrated prototype build plan, components in build order, no open decisions.
+- `docs/06-design-decisions.md` (CBC-DEC-001 v0.1): the design decisions register.
+- `bom/bom.csv` (14 lines, line 14 added) and `bom/bom-notes.md`; `docs/04-calcs/sizing.py` and `01-sizing.md` (CBC-CAL-001 v0.3); CBC-PRB-001 v0.6, CBC-PRC-001 v0.5, CBC-REQ-001 v0.5; `cad/src/sheets.py` and CBC-DWG-001 Rev P4; concept media re-rendered from the new model (blueprint CBC-DWG-010 Rev P4).
+- `project.yaml`: `design_state: constructable`; the decision record, build plan, register, overview picture and picture script added to `trl_evidence`. `README.md`: links line and a "Building the prototype" section.
+
+### Design changes made for construction (CBC-DDR-003)
+
+1. **Saddle plates (enclosure and arm).** Flat plates on a round pole, held by bands drawn as rings, became 3 mm plates (160 x 300 and 160 x 250 mm) seated on two bent 90° V-saddles each, with the bands passing through slots in the plate and across its front. Fits 60 to 140 mm poles. The enclosure plate gets a 100 x 150 mm lightening window.
+2. **FieldNode core.** The floating enclosure and internals became FieldNode's constructable core (FND-DDR-003): four lugs on M5 screws, internal plate on bosses, two-row bottom face, connector strip and rail fuses (BOM line 14). Port A takes the sensor cable through a 3.3 V load switch in place of FieldNode's port A boost converter.
+3. **Arm joint.** "Welded or bolted" became two 40 x 40 x 4 mm angle brackets, four M6 bolts through the plate and two through the tube on crush spacers. Arm 498 mm (was 512 mm); reach unchanged.
+4. **Sensor head.** A printed wedge pad with two M5 heat-set inserts hangs the head from the arm at its 7.5° tilt; an 8 mm inner ledge and a printed window frame clamp the film with four M3 screws; four standoffs carry the array; an M16 gland under the hood takes the cable. Arm axis 8.5 mm higher; window height and field of view unchanged.
+5. **Pole-top mount.** The welded sleeve, cap and post, floating hinge plate and floating panel became an all-bolted mount: 128 x 3 mm sleeve, 100 mm, with three M8 rivet-nut set screws; 8 mm cap disc on radial screws; post on two lower clips with plugs and M8 cross bolts; 290 x 150 x 3 mm rail plate at 35° on two upper clips; panel bolted through its frame lip. Panel now centred over the post; top 5.43 m (was about 5.50 m).
+6. **Cables.** The sensor cable (single-ended, 1.48 m route) and a new 1.5 m panel extension lead are tied to the pole over the bands, never under them; the sensor cable runs beside the arm into the head gland.
+7. **Notice plate.** 2 mm plate (model had 1.5 mm) with four slots and two stainless ties.
+
+### Key results (CBC-CAL-001 v0.3)
+
+| Quantity | Before | After |
+| --- | --- | --- |
+| Mass on the pole (R11, 6 kg) | 4.44 kg | 5.26 kg, met on paper |
+| Parts cost (R13, $275) | $253.00 | $274.00, met on paper, margin $1.00 |
+| Panel post factor; pole base moment | 38; 283 N·m | 55; 279 N·m |
+| Twist factor of the bands | 3.2 | 3.3 |
+| Constructability checks | none | 106 of 106 pass |
+
+No requirement changed status: 0 not met, 3 at risk (R1, R2, R7), 7 met on paper, 1 met by design, 4 not verifiable at TRL 3.
+
+### Proposed, awaiting Amish (in CBC-DEC-001)
+
+1. Accept the design for construction (CBC-DDR-003). Recommendation: accept.
+2. Cost margin of $1.00: (a) accept and confirm prices when buying, (b) raise `budget_usd` to $290, (c) leave port B out of CurbCount's core. Recommendation: (a).
+3. Still open from earlier sessions: first co-design partner and street; port pinout, port A supply and calibration jumper with FieldNode; the six appearance items of 2026-09-26 (item 6 superseded by the design for construction).
+
+### Safety
+
+- The build plan adds stops for the stub stand (5.3 kg at 2 m with the panel on top must not tip), for frames viewed only through the calibration jumper, and repeats the site installation stop (work at height beside traffic; 52 N at 5.3 m, 279 N·m at the pole base for the pole owner to check). FieldNode's cell stops apply in full.
+- Cables now pass over the bands, so no band can crush a cable.
+
+### Stale media (made on Amish's Mac, not regenerated here)
+
+The photoreal renders (`media/render-*.png`), `media/card.png`, `media/social-preview.png` and the appearance model `cad/src/product_model.py` show the concept saddles, arm joint, head fixing, pole-top mount and panel position; they are stale and need re-rendering with `/render-product`.
+
+### Recommended next step
+
+Amish reviews CBC-DDR-003 and the register. TRL 4 (building and testing to the plan) stays on hold by his instruction.

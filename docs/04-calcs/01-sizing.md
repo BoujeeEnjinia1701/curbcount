@@ -3,9 +3,9 @@ doc_id: CBC-CAL-001
 title: CurbCount sizing calculations
 project: CurbCount
 doc_type: Calculation
-version: "0.2"
+version: "0.3"
 status: Draft
-date: '2026-09-25'
+date: '2026-09-30'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -17,11 +17,15 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Recommendations accepted by Amish (DDR-002)
+- version: "0.3"
+  date: '2026-09-30'
+  author: Amish Chadha
+  change: Design for construction (CBC-DDR-003); wind, arm, mass, installation and cost figures recalculated from the constructable model; no requirement changed status
 ---
 
 # CurbCount sizing calculations
 
-With the decisions Amish accepted on 2026-09-25 (CBC-DDR-002) applied, CurbCount meets eight of its fifteen requirements on paper (seven by calculation, one by design), has three at risk, cannot show four at TRL 3 and misses none. The largest change is where the tracking runs: it moves from a separate ESP32-S3 in the sensor head to FieldNode's STM32WL, in fixed point. That cuts the head load from 241 mW to 92 mW, so the counter runs on standard FieldNode power (one cell and the 6 W panel) and still counts for 6.2 days without sun; parts fall from $290.00 to $253.00 against the new $275 budget; and the mass falls from 6.02 kg to 4.44 kg. The record is packed into 10 bytes so it fits US915 DR0; R4 is restated in pixels per meter at head height, which the sensor meets at 7.6 px/m; and R7 is restated for temperate sites, where it remains at risk because sunlit sidewalks need track averaging. The three at-risk requirements are R1 (4.2 frames for a car at 50 km/h), R2 (merging) and R7. Every number in this note is printed by `docs/04-calcs/sizing.py`; the tag in brackets, for example [E2], is the line of that script's output that carries it.
+With the decisions Amish accepted on 2026-09-25 (CBC-DDR-002) applied, CurbCount meets eight of its fifteen requirements on paper (seven by calculation, one by design), has three at risk, cannot show four at TRL 3 and misses none. The largest change is where the tracking runs: it moves from a separate ESP32-S3 in the sensor head to FieldNode's STM32WL, in fixed point. That cuts the head load from 241 mW to 92 mW, so the counter runs on standard FieldNode power (one cell and the 6 W panel) and still counts for 6.2 days without sun; parts fall from $290.00 to $253.00 against the new $275 budget; and the mass falls from 6.02 kg to 4.44 kg. Version 0.3 recalculates the mounting, mass and cost figures for the constructable design of CBC-DDR-003 (saddles, brackets, a bolted pole-top mount and their fixings): the counter now weighs 5.26 kg and costs $274.00, and no requirement changes status. The record is packed into 10 bytes so it fits US915 DR0; R4 is restated in pixels per meter at head height, which the sensor meets at 7.6 px/m; and R7 is restated for temperate sites, where it remains at risk because sunlit sidewalks need track averaging. The three at-risk requirements are R1 (4.2 frames for a car at 50 km/h), R2 (merging) and R7. Every number in this note is printed by `docs/04-calcs/sizing.py`; the tag in brackets, for example [E2], is the line of that script's output that carries it.
 
 > **Safety:** These are first-principles estimates for a paper proof of concept. They do not show that the mount is safe on a particular pole, that the cell is safe in a particular climate or that the device complies with data protection law where it is installed. Pole loading must be checked by the pole owner. See CBC-PRC-001, Safety.
 
@@ -130,19 +134,19 @@ R5 is **met by design** and R15 is **met on paper**.
 
 ## H. Wind, mounting and mass (R11, R12)
 
-- **Panel.** A 35 m/s gust gives 750 Pa and 52 N normal to the 6 W panel. With a 0.256 m lever to the post base the moment is 13 N·m, which stresses the 42.4 x 3.0 mm aluminium post to 4 MPa (factor 38 on yield) [H1]. The 120 mm sleeve bears on the pole top with about 192 N. The pole itself carries the 52 N at 5.4 m, 283 N·m at its base, which the pole owner must check [H2]. The v0.1 figures with the 20 W panel were 170 N and 933 N·m.
-- **Arm.** Wind along the street loads the arm with 31 N and the head with 8 N, twisting the arm about the pole by 14.1 N·m against 45.7 N·m of saddle friction from two bands (factor 3.2) [H3]. The arm bends to 3.3 MPa and its tip moves 0.17 mm, 0.019 degrees of aim [H4].
-- **Mass (R11).** The FieldNode core is 1.02 kg; made parts are the arm and saddle 0.65 kg, the pole-top mount 1.09 kg, the enclosure saddle plate 0.29 kg, the head 0.19 kg and the notice plate 0.12 kg; bought parts add 1.06 kg, 0.55 kg of it the panel. The total is 4.44 kg, against 6.02 kg in v0.1; the ESP32-S3 fallback would be about 5.99 kg [H5]. R11 (6 kg) is **met on paper**, kept at 6 kg as Amish decided.
+- **Panel.** A 35 m/s gust gives 750 Pa and 52 N normal to the 6 W panel. The panel now sits centred over the post on its rail plate (CBC-DDR-003), so the lever to the post base is 0.180 m (0.256 m in v0.2) and the moment 9 N·m, which stresses the 42.4 x 3.0 mm aluminium post to 3 MPa (factor 55 on yield) [H1]. The 100 mm sleeve bears on the pole top with about 169 N. The pole itself carries the 52 N at 5.3 m, 279 N·m at its base, which the pole owner must check [H2]. The v0.1 figures with the 20 W panel were 170 N and 933 N·m.
+- **Arm.** The arm is now 498 mm long, butted to its saddle plate. Wind along the street loads the arm with 30 N and the head with 8 N, twisting the arm about the pole by 14.0 N·m against 45.7 N·m of saddle friction from two bands (factor 3.3) [H3]. The arm bends to 3.1 MPa and its tip moves 0.16 mm, 0.018 degrees of aim [H4].
+- **Mass (R11).** Masses of made parts come from the volumes of the constructable model. The FieldNode core is 1.04 kg with its connector strip; made parts are the arm with its saddle plate, V-saddles and brackets 0.89 kg, the pole-top mount 1.29 kg, the enclosure saddle plate with its V-saddles 0.36 kg, the printed head with its wedge pad and window frame 0.26 kg and the notice plate 0.16 kg; bought parts add 1.26 kg, 0.55 kg of it the panel. The total is 5.26 kg (4.44 kg in v0.2, before the saddles, brackets, clips, plugs and fixings were added); the ESP32-S3 fallback would be about 6.81 kg [H5]. R11 (6 kg) is **met on paper**, kept at 6 kg as Amish decided.
 - **Installation (R12).** The task list comes to 59 min for two people with a mobile platform [H6], at the 60 min limit. Wind and fit are met on paper, but the time is **not verifiable at TRL 3**. The pole-top mount fits only poles with a free top.
 
 ## I. Sealing and service life (R10, R14)
 
 - A winter night of 16 h discharges the cell by 9 %, and five years is 1,825 such cycles [I1], well within LiFePO4 cycle life at that depth. Calendar ageing in hot enclosures (see FND-CAL-001) and ultraviolet ageing of the HDPE window are unknown. R14 is **not verifiable at TRL 3**.
-- The FieldNode enclosure is IP65 by design and the head is gasketed around the film window; R10 is **not verifiable at TRL 3**.
+- The FieldNode enclosure is IP65 by design and the head's film window is clamped to a ledge by a printed frame; R10 is **not verifiable at TRL 3**.
 
 ## J. Cost (R13)
 
-The BOM has 13 lines, all priced; the total is $253.00 against the $275 `budget_usd`, a margin of $22.00 [J1]. The FieldNode share (lines 1 to 3 and part of 13) is $98.00, and line 4 is FieldNode's own $14 panel. The ESP32-S3 fallback would cost about $290.00, over the budget [J2]. R13 is **met on paper**.
+The BOM has 14 lines, all priced; the total is $274.00 against the $275 `budget_usd`, a margin of $1.00 [J1] ($253.00 in v0.2). The rise comes from the parts added for construction (CBC-DDR-003) and from FieldNode's repricing of its core, which now includes the connector strip: the FieldNode share (lines 1 to 3, 14 and part of 13) is $105.00, and line 4 is FieldNode's own $14 panel. The ESP32-S3 fallback would cost about $311.00, over the budget [J2]. R13 is **met on paper**, with a thin margin that rests on indicative prices (CBC-DEC-001).
 
 ## Results
 
@@ -160,9 +164,9 @@ The BOM has 13 lines, all priced; the total is $253.00 against the $275 `budget_
 | R8 | Autonomy | 6.22 d; 4.36 d at -20 °C; 4.98 d at end of life | 3 days | Met on paper (one cell) |
 | R9 | Winter energy | 4.4 Wh/day stored against 2.47 Wh/day | Energy neutral at 1.5 sun hours | Met on paper (6 W) |
 | R10 | Ingress protection | IP65 enclosure, gasketed head | IP65 | Not verifiable at TRL 3 |
-| R11 | Mass | 4.44 kg | 6 kg or less | Met on paper |
-| R12 | Installation | 59 min estimate; panel post factor 38; twist factor 3.2 | Two people, 60 min, no drilling, 35 m/s | Not verifiable at TRL 3 (wind and fit met on paper) |
-| R13 | Cost | $253.00 | $275 or less | Met on paper |
+| R11 | Mass | 5.26 kg | 6 kg or less | Met on paper |
+| R12 | Installation | 59 min estimate; panel post factor 55; twist factor 3.3 | Two people, 60 min, no drilling, 35 m/s | Not verifiable at TRL 3 (wind and fit met on paper) |
+| R13 | Cost | $274.00 | $275 or less | Met on paper |
 | R14 | Service life | 9 % nightly depth of discharge | 5 years, one battery change | Not verifiable at TRL 3 |
 | R15 | Radio use | 0.82 s/h at SF9; 371 ms at US915 DR0; 10 of 11 bytes | EU868 1 % and US915 dwell | Met on paper |
 
