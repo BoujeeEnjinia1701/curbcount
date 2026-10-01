@@ -3,9 +3,9 @@ doc_id: CBC-DDR-003
 title: CurbCount design for construction
 project: CurbCount
 doc_type: Design decision record
-version: "0.1"
+version: "0.2"
 status: Draft
-date: '2026-09-30'
+date: '2026-10-01'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -13,6 +13,10 @@ revisions:
   date: '2026-09-30'
   author: Amish Chadha
   change: Changes that make the concept physically buildable, with the reason for each; made under Amish's 2026-09-30 instruction to make the design physically buildable; open for his review
+- version: "0.2"
+  date: '2026-10-01'
+  author: Amish Chadha
+  change: Budget treated as a value-engineering target
 ---
 
 # 0003: Design for construction
@@ -47,22 +51,22 @@ The changes keep what the counter does: the same thermal array, window height (4
 | Item | Change | Reason |
 | --- | --- | --- |
 | Mass | 5.26 kg on the pole (was 4.44 kg) [H5]; R11 (6 kg) still met on paper. | Saddles, brackets, clips, plugs, rail plate, fixings and the extension lead. Lightening windows in the enclosure plate and rail plate, 3 mm plates, a 100 mm sleeve and an 8 mm disc keep the rise to 0.8 kg. |
-| Cost | $274.00 (was $253.00) against the unchanged $275 `budget_usd` [J1]; margin $1.00. BOM lines 1, 5, 6, 7, 8, 12 and 13 respecified, 1, 5, 7, 8, 12 and 13 repriced, line 14 added. | Parts added for construction and FieldNode's own repricing of its core ($47 to $49, plus the $5 connector strip). |
+| Cost | $274.00 (was $253.00) against the unchanged $275 value-engineering target (`budget_usd`) [J1]: $1.00 under. BOM lines 1, 5, 6, 7, 8, 12 and 13 respecified, 1, 5, 7, 8, 12 and 13 repriced, line 14 added. | Parts added for construction and FieldNode's own repricing of its core ($47 to $49, plus the $5 connector strip). |
 | Wind and structure | Post factor 55 (was 38) and 169 N on the pole top (was 192 N) [H1, H2]; pole base moment 279 N·m (was 283 N·m); twist factor 3.3 (was 3.2) [H3]. | The panel now sits over the post and slightly lower. |
 | Drawings | CBC-DWG-001 Rev P4; making sketches CBC-DWG-101 to 116 added. | Follows the model. |
-| Documents | CBC-CAL-001 v0.3, CBC-PRC-001 v0.5, CBC-REQ-001 v0.5: mass, cost, wind and arm figures updated. No requirement changed status. | Follows the model. |
+| Documents | CBC-CAL-001 v0.4, CBC-PRC-001 v0.6, CBC-REQ-001 v0.6: mass, cost, wind and arm figures updated. No requirement changed status. | Follows the model. |
 | Sensing | Unchanged: the window, tilt and camera model are the same, so the footprint (-4.45 to 8.34 m) and resolution (7.6 px/m) stand. | |
 
 *Table 3. Proposed, awaiting Amish.*
 
 | # | Question | Options | Recommendation |
 | --- | --- | --- | --- |
-| A1 | The cost margin is now $1.00 on indicative prices. | (a) accept and confirm prices when parts are bought; (b) raise `budget_usd` to $290 for contingency; (c) leave port B out of CurbCount's core (about $6 less), departing from the standard FieldNode core. | (a). |
 | A2 | Accept the design for construction as a whole (this record). | Accept; or change individual items. | Accept. |
 
 ## Consequences
 
 - `design_state: constructable` in `project.yaml`. The build plan CBC-BLD-001 shows every component and step in pictures generated from the model (`cad/src/build_plan_media.py`); open decisions are in the design decisions register CBC-DEC-001.
-- Requirement status is unchanged: none not met, 3 at risk (R1, R2, R7), 7 met on paper, 1 met by design, 4 not verifiable at TRL 3 (CBC-CAL-001 v0.3).
+- Cost is reported against the value-engineering target: USD 275 (a hypothetical control target, not a limit) against an estimated USD 274.00 for the constructable design, USD 1.00 under; the register lists cost drivers and savings worth trying.
+- Requirement status is unchanged: none not met, 3 at risk (R1, R2, R7), 7 met on paper, 1 met by design, 4 not verifiable at TRL 3 (CBC-CAL-001 v0.4).
 - The photoreal renders (`media/render-*.png`), `media/card.png`, `media/social-preview.png` and the appearance model `cad/src/product_model.py` still show the concept saddles, arm joint, head fixing and pole-top mount; they need updating on Amish's Mac, where Blender is.
 - The enclosure part, its boss spacing and lug kit, the panel's frame lip, the band size for the site pole and the sleeve tube's bore are to be confirmed when parts are bought (CBC-DEC-001).

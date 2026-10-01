@@ -281,7 +281,7 @@ On 2026-09-30 Amish approved the illustrated build plan format ("this is the cor
 | Quantity | Before | After |
 | --- | --- | --- |
 | Mass on the pole (R11, 6 kg) | 4.44 kg | 5.26 kg, met on paper |
-| Parts cost (R13, $275) | $253.00 | $274.00, met on paper, margin $1.00 |
+| Parts cost (R13, value-engineering target $275) | $253.00 | $274.00 estimated, within the target ($1.00 under) |
 | Panel post factor; pole base moment | 38; 283 N·m | 55; 279 N·m |
 | Twist factor of the bands | 3.2 | 3.3 |
 | Constructability checks | none | 106 of 106 pass |
@@ -291,8 +291,7 @@ No requirement changed status: 0 not met, 3 at risk (R1, R2, R7), 7 met on paper
 ### Proposed, awaiting Amish (in CBC-DEC-001)
 
 1. Accept the design for construction (CBC-DDR-003). Recommendation: accept.
-2. Cost margin of $1.00: (a) accept and confirm prices when buying, (b) raise `budget_usd` to $290, (c) leave port B out of CurbCount's core. Recommendation: (a).
-3. Still open from earlier sessions: first co-design partner and street; port pinout, port A supply and calibration jumper with FieldNode; the six appearance items of 2026-09-26 (item 6 superseded by the design for construction).
+2. Still open from earlier sessions: first co-design partner and street; port pinout, port A supply and calibration jumper with FieldNode; the six appearance items of 2026-09-26 (item 6 superseded by the design for construction).
 
 ### Safety
 

@@ -3,9 +3,9 @@ doc_id: CBC-PRC-001
 title: CurbCount design precis
 project: CurbCount
 doc_type: Design precis
-version: "0.5"
+version: "0.6"
 status: Draft
-date: '2026-09-30'
+date: '2026-10-01'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -29,11 +29,15 @@ revisions:
   date: '2026-09-30'
   author: Amish Chadha
   change: "Design for construction (CBC-DDR-003): saddles, arm brackets, head fixing and a bolted pole-top mount; mass, cost and wind figures from CBC-CAL-001 v0.3"
+- version: "0.6"
+  date: '2026-10-01'
+  author: Amish Chadha
+  change: Budget treated as a value-engineering target
 ---
 
 # CurbCount design precis
 
-CurbCount is a clamp-on street pole counter. A 32 x 24 pixel thermal array looks down from 4.3 m over the sidewalk, bike lane and nearest traffic lane; FieldNode's STM32WL turns the heat blobs into counts of people, cyclists and vehicles by direction and sends only 15-minute counts over LoRaWAN. The sensor images a person's head at 7.6 px/m (8.5 px/m for a 2.0 m person), far below what is needed to recognize anyone, so privacy does not depend on the firmware. The calculations in CBC-CAL-001 v0.3 show that on standard FieldNode power (one cell, 6 W panel) it can count for 6.2 days without sun and stay energy neutral in winter, weighs 5.26 kg on the pole and costs $274.00 in parts against the $275 budget. A thermal-only counter goes blind for much of a hot day, so this build is for temperate sites; hot-climate sites use the radar variant (CBC-DDR-002).
+CurbCount is a clamp-on street pole counter. A 32 x 24 pixel thermal array looks down from 4.3 m over the sidewalk, bike lane and nearest traffic lane; FieldNode's STM32WL turns the heat blobs into counts of people, cyclists and vehicles by direction and sends only 15-minute counts over LoRaWAN. The sensor images a person's head at 7.6 px/m (8.5 px/m for a 2.0 m person), far below what is needed to recognize anyone, so privacy does not depend on the firmware. The calculations in CBC-CAL-001 v0.4 show that on standard FieldNode power (one cell, 6 W panel) it can count for 6.2 days without sun and stay energy neutral in winter, weighs 5.26 kg on the pole and costs an estimated $274.00 in parts against the $275 value-engineering target. A thermal-only counter goes blind for much of a hot day, so this build is for temperate sites; hot-climate sites use the radar variant (CBC-DDR-002).
 
 ![Figure 1. CurbCount on a street pole with a 1.75 m person for scale; the teal area is the calculated sensing footprint](../media/hero.png)
 
@@ -76,7 +80,7 @@ The parametric model is `cad/src/model.py` (STEP and STL in `cad/step/` and `cad
 
 ## Key numbers
 
-Table 2. Key numbers from CBC-CAL-001 v0.3. Tags refer to lines of `docs/04-calcs/sizing.py` output.
+Table 2. Key numbers from CBC-CAL-001 v0.4. Tags refer to lines of `docs/04-calcs/sizing.py` output.
 
 | Quantity | Value | Requirement |
 | --- | --- | --- |
@@ -91,7 +95,7 @@ Table 2. Key numbers from CBC-CAL-001 v0.3. Tags refer to lines of `docs/04-calc
 | Uplink | 10 bytes per 15 min; 206 ms at SF9, 0.82 s/h; 371 ms at US915 DR0 [G1, G2] | R5 met; R15 met on paper |
 | Wind on panel | 52 N at 35 m/s; post factor 55 [H1] | R12 |
 | Mass on the pole | 5.26 kg [H5] | R11 met on paper |
-| Parts cost | $274.00 against $275 [J1] | R13 met on paper (thin margin) |
+| Parts cost | $274.00 estimated against the $275 value-engineering target [J1] | R13 within the value-engineering target ($1.00 under) |
 
 Counts will still run low where parked vans, trees and awnings hide the footprint, and where people walk side by side.
 

@@ -3,9 +3,9 @@ doc_id: CBC-REQ-001
 title: CurbCount requirements
 project: CurbCount
 doc_type: Requirements
-version: "0.5"
+version: "0.6"
 status: Draft
-date: '2026-09-30'
+date: '2026-10-01'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -29,17 +29,21 @@ revisions:
   date: '2026-09-30'
   author: Amish Chadha
   change: Status figures from CBC-CAL-001 v0.3 after the design for construction (CBC-DDR-003); no status changed
+- version: "0.6"
+  date: '2026-10-01'
+  author: Amish Chadha
+  change: Budget treated as a value-engineering target
 ---
 
 # CurbCount requirements
 
-These requirements are targets for concept review and must be revised with a co-design partner before the design is frozen. The design choices behind them (thermal array, tracking on FieldNode's STM32WL with standard FieldNode power, 15-minute bins and three classes in a 10-byte record, jumper-only calibration, public notice) were decided by Amish on 2026-09-25 (CBC-DDR-001 and CBC-DDR-002). Version 0.4 applies his decisions: R4 is restated in pixels per meter at head height, R7 is restated for temperate sites, R13 follows the new $275 budget, and R11 stays at 6 kg. Version 0.5 takes its figures from CBC-CAL-001 v0.3, after the design for construction (CBC-DDR-003); no status changed. Status is taken from the calculation note CBC-CAL-001 v0.3; "met on paper" means met by calculation only. No requirement is **not met**. Three are at risk (R1, R2, R7) and four cannot be shown at TRL 3 (R3, R10, R12, R14).
+These requirements are targets for concept review and must be revised with a co-design partner before the design is frozen. The design choices behind them (thermal array, tracking on FieldNode's STM32WL with standard FieldNode power, 15-minute bins and three classes in a 10-byte record, jumper-only calibration, public notice) were decided by Amish on 2026-09-25 (CBC-DDR-001 and CBC-DDR-002). Version 0.4 applies his decisions: R4 is restated in pixels per meter at head height, R7 is restated for temperate sites, R13 follows the new $275 value-engineering target, and R11 stays at 6 kg. Version 0.5 takes its figures from CBC-CAL-001 v0.4, after the design for construction (CBC-DDR-003); no status changed. Status is taken from the calculation note CBC-CAL-001 v0.4; "met on paper" means met by calculation only. No requirement is **not met**. Three are at risk (R1, R2, R7) and four cannot be shown at TRL 3 (R3, R10, R12, R14).
 
 Design case: one counter on a 114 mm pole 0.45 m behind the curb, sensor window 4.3 m above the road, a 3 m sidewalk, a 2.0 m bike lane and one 3.5 m traffic lane.
 
 Table 1. Requirements.
 
-| ID | Requirement | Target | Verification | Status (CBC-CAL-001 v0.3) |
+| ID | Requirement | Target | Verification | Status (CBC-CAL-001 v0.4) |
 | --- | --- | --- | --- | --- |
 | R1 | Count pedestrians, cyclists (including micromobility) and motor vehicles in the nearest lane, by direction along the street | 3 classes x 2 directions | Test against manual counts | At risk: 4.2 frames for a car at 50 km/h, 4 assumed needed |
 | R2 | Count accuracy for pedestrians and cyclists | Within ±10 % of manual counts per hour at flows up to 600 per hour per direction | Field comparison with manual counts | At risk: random merging alone loses 6.5 %; groups add more |
@@ -53,7 +57,7 @@ Table 1. Requirements.
 | R10 | Ingress protection | IP65 for the enclosure and the sensor head | Spray test | Not verifiable at TRL 3 |
 | R11 | Mass on the pole | 6 kg or less | Weighing | Met on paper: 5.26 kg with the parts added for construction (4.44 kg in v0.4; 6.02 kg with the 20 W panel) |
 | R12 | Installation | Two trained people, 60 min, no drilling, welding or pole wiring; withstands 35 m/s gusts | Timed trial, bracket calculation | Not verifiable at TRL 3: 59 min estimate; wind and fit met on paper |
-| R13 | Parts cost | $275 or less per counter (`budget_usd`; was $150) | Priced BOM | Met on paper: $274.00 (margin $1.00) |
+| R13 | Parts cost | $275 or less per counter (value-engineering target, `budget_usd`; was $150) | Priced BOM | Within the value-engineering target: $274.00 ($1.00 under) |
 | R14 | Service life | 5 years outdoors with one battery change | Design review, UV-stable materials | Not verifiable at TRL 3 |
 | R15 | Radio use | Within EU868 1 % duty cycle and the US915 dwell limits | Airtime calculation | Met on paper: 0.82 s/h at SF9; 371 ms at US915 DR0 |
 

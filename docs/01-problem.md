@@ -3,9 +3,9 @@ doc_id: CBC-PRB-001
 title: CurbCount problem statement
 project: CurbCount
 doc_type: Problem statement
-version: "0.6"
+version: "0.7"
 status: Draft
-date: '2026-09-30'
+date: '2026-10-01'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -33,6 +33,10 @@ revisions:
   date: '2026-09-30'
   author: Amish Chadha
   change: Parts cost updated to the design for construction (CBC-DDR-003, CBC-CAL-001 v0.3)
+- version: "0.7"
+  date: '2026-10-01'
+  author: Amish Chadha
+  change: Budget treated as a value-engineering target
 ---
 
 # CurbCount problem statement
@@ -64,7 +68,7 @@ Operating context: mounted on an existing street pole at 4 to 5 m, outdoors for 
 
 ## Constraints
 
-- Garage-buildable prototype, $275 USD in parts, the budget Amish set on 2026-09-25 (CBC-DDR-002). The priced BOM comes to $274.00 (CBC-CAL-001 v0.3).
+- Garage-buildable prototype, a value-engineering target of $275 USD in parts (a hypothetical control target, not a limit), set by Amish on 2026-09-25 (CBC-DDR-002). The estimated cost of the constructable design is $274.00, $1.00 under the target (CBC-CAL-001 v0.4).
 - Built on the lab's shared **FieldNode** power and radio core, as the FieldNode README lists CurbCount among its intended users.
 - Privacy by design: no images, audio recordings or personal identifiers leave the device; only aggregate counts are stored or sent.
 - Clamp-on mounting with no drilling, welding or electrical connection to the pole.

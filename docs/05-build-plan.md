@@ -3,9 +3,9 @@ doc_id: CBC-BLD-001
 title: CurbCount prototype build plan
 project: CurbCount
 doc_type: Build plan
-version: "0.1"
+version: "0.2"
 status: Draft
-date: '2026-09-30'
+date: '2026-10-01'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -13,6 +13,10 @@ revisions:
     date: '2026-09-30'
     author: Amish Chadha
     change: First build plan, with pictures by component and step; design made constructable (CBC-DDR-003)
+  - version: "0.2"
+    date: '2026-10-01'
+    author: Amish Chadha
+    change: Budget treated as a value-engineering target; cross-references updated
 ---
 
 # CurbCount prototype build plan
@@ -583,8 +587,8 @@ Stop at each point. Carry on only when everything listed is true.
 - Model and constructability checks: `cad/src/model.py` (`python cad/src/model.py --check`, 106 checks); STEP and STL exports in `cad/step/` and `cad/stl/`.
 - Pictures: `cad/src/build_plan_media.py`, using `.kit/build_views.py`; written to `docs/05-build-plan/` and `cad/drawings/CBC-DWG-101` to `CBC-DWG-116`.
 - General arrangement: `cad/drawings/CBC-DWG-001.pdf`, Rev P4.
-- Calculations: `docs/04-calcs/01-sizing.md` (CBC-CAL-001 v0.3) and `docs/04-calcs/sizing.py`; wind and mount [H1] to [H4], mass [H5], install time [H6], cost [J1].
+- Calculations: `docs/04-calcs/01-sizing.md` (CBC-CAL-001 v0.4) and `docs/04-calcs/sizing.py`; wind and mount [H1] to [H4], mass [H5], install time [H6], cost [J1].
 - Bill of materials: `bom/bom.csv`.
 - FieldNode core: FieldNode's build plan FND-BLD-001 and decision record FND-DDR-003.
 - Decisions: `docs/decisions/0003-design-for-construction.md` (CBC-DDR-003), with CBC-DDR-001 and CBC-DDR-002; open decisions in `docs/06-design-decisions.md` (CBC-DEC-001).
-- Requirements: `docs/03-requirements.md` (CBC-REQ-001 v0.5).
+- Requirements: `docs/03-requirements.md` (CBC-REQ-001 v0.6).

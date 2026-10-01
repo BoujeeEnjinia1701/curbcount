@@ -3,9 +3,9 @@ doc_id: CBC-CAL-001
 title: CurbCount sizing calculations
 project: CurbCount
 doc_type: Calculation
-version: "0.3"
+version: "0.4"
 status: Draft
-date: '2026-09-30'
+date: '2026-10-01'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -21,11 +21,15 @@ revisions:
   date: '2026-09-30'
   author: Amish Chadha
   change: Design for construction (CBC-DDR-003); wind, arm, mass, installation and cost figures recalculated from the constructable model; no requirement changed status
+- version: "0.4"
+  date: '2026-10-01'
+  author: Amish Chadha
+  change: Budget treated as a value-engineering target
 ---
 
 # CurbCount sizing calculations
 
-With the decisions Amish accepted on 2026-09-25 (CBC-DDR-002) applied, CurbCount meets eight of its fifteen requirements on paper (seven by calculation, one by design), has three at risk, cannot show four at TRL 3 and misses none. The largest change is where the tracking runs: it moves from a separate ESP32-S3 in the sensor head to FieldNode's STM32WL, in fixed point. That cuts the head load from 241 mW to 92 mW, so the counter runs on standard FieldNode power (one cell and the 6 W panel) and still counts for 6.2 days without sun; parts fall from $290.00 to $253.00 against the new $275 budget; and the mass falls from 6.02 kg to 4.44 kg. Version 0.3 recalculates the mounting, mass and cost figures for the constructable design of CBC-DDR-003 (saddles, brackets, a bolted pole-top mount and their fixings): the counter now weighs 5.26 kg and costs $274.00, and no requirement changes status. The record is packed into 10 bytes so it fits US915 DR0; R4 is restated in pixels per meter at head height, which the sensor meets at 7.6 px/m; and R7 is restated for temperate sites, where it remains at risk because sunlit sidewalks need track averaging. The three at-risk requirements are R1 (4.2 frames for a car at 50 km/h), R2 (merging) and R7. Every number in this note is printed by `docs/04-calcs/sizing.py`; the tag in brackets, for example [E2], is the line of that script's output that carries it.
+With the decisions Amish accepted on 2026-09-25 (CBC-DDR-002) applied, CurbCount meets eight of its fifteen requirements on paper (seven by calculation, one by design), has three at risk, cannot show four at TRL 3 and misses none. The largest change is where the tracking runs: it moves from a separate ESP32-S3 in the sensor head to FieldNode's STM32WL, in fixed point. That cuts the head load from 241 mW to 92 mW, so the counter runs on standard FieldNode power (one cell and the 6 W panel) and still counts for 6.2 days without sun; parts fall from $290.00 to $253.00 against the new $275 value-engineering target; and the mass falls from 6.02 kg to 4.44 kg. Version 0.3 recalculates the mounting, mass and cost figures for the constructable design of CBC-DDR-003 (saddles, brackets, a bolted pole-top mount and their fixings): the counter now weighs 5.26 kg and costs $274.00, and no requirement changes status. The record is packed into 10 bytes so it fits US915 DR0; R4 is restated in pixels per meter at head height, which the sensor meets at 7.6 px/m; and R7 is restated for temperate sites, where it remains at risk because sunlit sidewalks need track averaging. The three at-risk requirements are R1 (4.2 frames for a car at 50 km/h), R2 (merging) and R7. Every number in this note is printed by `docs/04-calcs/sizing.py`; the tag in brackets, for example [E2], is the line of that script's output that carries it.
 
 > **Safety:** These are first-principles estimates for a paper proof of concept. They do not show that the mount is safe on a particular pole, that the cell is safe in a particular climate or that the device complies with data protection law where it is installed. Pole loading must be checked by the pole owner. See CBC-PRC-001, Safety.
 
@@ -35,7 +39,7 @@ The note checks every requirement in CBC-REQ-001 v0.4 against the design in CBC-
 
 The design case is one counter on a 114 mm street pole 0.45 m behind the curb, the sensor window 4.3 m above the road, a 3 m sidewalk (0.15 m above the road), a 2.0 m bike lane and one 3.5 m traffic lane.
 
-Changes from v0.1: the baseline processor is the STM32WL (the ESP32-S3 head is a fallback on paper); one cell and FieldNode's 6 W panel replace two cells and a 20 W panel; the payload is 10 bytes; R4, R7 and R13 are checked against their restated targets; `budget_usd` is $275.
+Changes from v0.1: the baseline processor is the STM32WL (the ESP32-S3 head is a fallback on paper); one cell and FieldNode's 6 W panel replace two cells and a 20 W panel; the payload is 10 bytes; R4, R7 and R13 are checked against their restated targets; `budget_usd`, the value-engineering target, is $275.
 
 ## Assumptions
 
@@ -146,7 +150,7 @@ R5 is **met by design** and R15 is **met on paper**.
 
 ## J. Cost (R13)
 
-The BOM has 14 lines, all priced; the total is $274.00 against the $275 `budget_usd`, a margin of $1.00 [J1] ($253.00 in v0.2). The rise comes from the parts added for construction (CBC-DDR-003) and from FieldNode's repricing of its core, which now includes the connector strip: the FieldNode share (lines 1 to 3, 14 and part of 13) is $105.00, and line 4 is FieldNode's own $14 panel. The ESP32-S3 fallback would cost about $311.00, over the budget [J2]. R13 is **met on paper**, with a thin margin that rests on indicative prices (CBC-DEC-001).
+The BOM has 14 lines, all priced; the estimated total is $274.00 against the $275 value-engineering target (`budget_usd`, a hypothetical control target, not a limit), $1.00 under [J1] ($253.00 in v0.2). The rise comes from the parts added for construction (CBC-DDR-003) and from FieldNode's repricing of its core, which now includes the connector strip: the FieldNode share (lines 1 to 3, 14 and part of 13) is $105.00, and line 4 is FieldNode's own $14 panel. The ESP32-S3 fallback would cost about $311.00, over the target [J2]. R13 is **within the value-engineering target**, by a thin margin that rests on indicative prices (cost drivers and savings are in CBC-DEC-001).
 
 ## Results
 
@@ -166,7 +170,7 @@ The BOM has 14 lines, all priced; the total is $274.00 against the $275 `budget_
 | R10 | Ingress protection | IP65 enclosure, gasketed head | IP65 | Not verifiable at TRL 3 |
 | R11 | Mass | 5.26 kg | 6 kg or less | Met on paper |
 | R12 | Installation | 59 min estimate; panel post factor 55; twist factor 3.3 | Two people, 60 min, no drilling, 35 m/s | Not verifiable at TRL 3 (wind and fit met on paper) |
-| R13 | Cost | $274.00 | $275 or less | Met on paper |
+| R13 | Cost | $274.00 | $275 or less | Within the value-engineering target ($1.00 under) |
 | R14 | Service life | 9 % nightly depth of discharge | 5 years, one battery change | Not verifiable at TRL 3 |
 | R15 | Radio use | 0.82 s/h at SF9; 371 ms at US915 DR0; 10 of 11 bytes | EU868 1 % and US915 dwell | Met on paper |
 
