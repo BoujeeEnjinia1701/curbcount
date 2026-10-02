@@ -3,9 +3,9 @@ doc_id: CBC-PRB-001
 title: CurbCount problem statement
 project: CurbCount
 doc_type: Problem statement
-version: "0.7"
+version: "0.8"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -37,6 +37,10 @@ revisions:
   date: '2026-10-01'
   author: Amish Chadha
   change: Budget treated as a value-engineering target
+- version: "0.8"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: "First partner question answered by Amish's 2026-10-02 decision (first candidate to approach: City of Toronto transportation services)"
 ---
 
 # CurbCount problem statement
@@ -100,7 +104,7 @@ This design is for communities the author is not part of, so requirements come f
 
 ## Open questions
 
-- Which partner and street first: a city transport department, a residents' group or a university? Proposed, awaiting Amish (no recommendation made).
+- Which partner and street first: a city transport department, a residents' group or a university? Decided by Amish, 2026-10-02 (CBC-DDR-002, O1): a city transport department that already runs manual or loop counts on a street with a bike lane and 60 to 140 mm poles, so its counts can check the counter, with the first trial in a season with air under 20 °C. The first candidate to approach is the City of Toronto's transportation services, which publishes its traffic count data; nothing is agreed.
 - Count interval: 15-minute bins, decided by Amish on 2026-09-25 (CBC-DDR-001 D5). A partner should confirm planners do not need a finer interval.
 - Public notice: a plate on each pole with a link to this repository, decided by Amish on 2026-09-25 (CBC-DDR-001 D7).
 - Hot climates: CBC-CAL-001 shows a thermal-only counter goes blind for much of a hot day. Amish decided on 2026-09-25 that the thermal build is for temperate sites and that the radar variant is brought forward for any hot partner city (CBC-DDR-002). Which partner cities are hot enough to need it depends on the partner choice above.

@@ -3,9 +3,9 @@ doc_id: CBC-DDR-002
 title: CurbCount recommendations accepted
 project: CurbCount
 doc_type: Design decision record
-version: "0.1"
+version: "0.2"
 status: Draft
-date: '2026-09-25'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -13,12 +13,16 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Record the recommendations accepted by Amish on 2026-09-25 and what changed in the repo
+- version: "0.2"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: "O1 decided by Amish on 2026-10-02 (CBC-DEC-001, item 2)"
 ---
 
 # 0002: Recommendations accepted
 
 - **Date:** 2026-09-25
-- **Status:** accepted. Amish accepted every recommendation in `docs/REVIEW.md` and CBC-DDR-001 on 2026-09-25. Items with no recommendation stay open.
+- **Status:** accepted. Amish accepted every recommendation in `docs/REVIEW.md` and CBC-DDR-001 on 2026-09-25. Items with no recommendation stayed open at this record; O1 was decided by Amish on 2026-10-02 (CBC-DEC-001, item 2): "i approve your recommendations for all 555 open decisions."
 
 ## Context
 
@@ -50,7 +54,7 @@ Pitch and problem: no rewording was recommended, so `project.yaml` and `README.m
 
 | # | Item | Status |
 | --- | --- | --- |
-| O1 | First co-design partner and street (city transport department, residents' group or university). No recommendation was made. | Proposed, awaiting Amish |
+| O1 | First co-design partner and street (city transport department, residents' group or university). No recommendation was made. | Decided by Amish, 2026-10-02 (CBC-DEC-001, item 2): a city transport department that already runs manual or loop counts on a street with a bike lane and 60 to 140 mm poles, first trial in a season with air under 20 °C; first candidate to approach, the City of Toronto's transportation services. Nothing is agreed with any partner. |
 
 The side-arm panel mount for poles with a lantern on top was a suggestion, not a recommendation, and is not applied.
 

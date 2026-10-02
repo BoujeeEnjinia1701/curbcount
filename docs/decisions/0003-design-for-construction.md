@@ -3,9 +3,9 @@ doc_id: CBC-DDR-003
 title: CurbCount design for construction
 project: CurbCount
 doc_type: Design decision record
-version: "0.2"
+version: "0.3"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -17,12 +17,16 @@ revisions:
   date: '2026-10-01'
   author: Amish Chadha
   change: Budget treated as a value-engineering target
+- version: "0.3"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: "Accepted by Amish on 2026-10-02 (Tables 1 to 3); record stays Draft"
 ---
 
 # 0003: Design for construction
 
 - **Date:** 2026-09-30
-- **Status:** proposed. Every change below was made under Amish's 2026-09-30 instruction to make the design physically buildable; open for his review. The items in Table 3 are "Proposed, awaiting Amish".
+- **Status:** accepted. Amish, 2026-10-02: "i approve your recommendations for all 555 open decisions." This covers every change in Tables 1 and 2 and the recommendation in Table 3 (A2), recorded in the design decisions register (CBC-DEC-001). The record stays Draft.
 
 ## Context
 
@@ -57,16 +61,16 @@ The changes keep what the counter does: the same thermal array, window height (4
 | Documents | CBC-CAL-001 v0.4, CBC-PRC-001 v0.6, CBC-REQ-001 v0.6: mass, cost, wind and arm figures updated. No requirement changed status. | Follows the model. |
 | Sensing | Unchanged: the window, tilt and camera model are the same, so the footprint (-4.45 to 8.34 m) and resolution (7.6 px/m) stand. | |
 
-*Table 3. Proposed, awaiting Amish.*
+*Table 3. Proposed, then accepted by Amish as recommended on 2026-10-02.*
 
 | # | Question | Options | Recommendation |
 | --- | --- | --- | --- |
-| A2 | Accept the design for construction as a whole (this record). | Accept; or change individual items. | Accept. |
+| A2 | Accept the design for construction as a whole (this record). | Accept; or change individual items. | Accept. Accepted by Amish, 2026-10-02. |
 
 ## Consequences
 
-- `design_state: constructable` in `project.yaml`. The build plan CBC-BLD-001 shows every component and step in pictures generated from the model (`cad/src/build_plan_media.py`); open decisions are in the design decisions register CBC-DEC-001.
+- `design_state: constructable` in `project.yaml`. The build plan CBC-BLD-001 shows every component and step in pictures generated from the model (`cad/src/build_plan_media.py`); decisions are recorded in the design decisions register CBC-DEC-001, which accepted this record on 2026-10-02.
 - Cost is reported against the value-engineering target: USD 275 (a hypothetical control target, not a limit) against an estimated USD 274.00 for the constructable design, USD 1.00 under; the register lists cost drivers and savings worth trying.
 - Requirement status is unchanged: none not met, 3 at risk (R1, R2, R7), 7 met on paper, 1 met by design, 4 not verifiable at TRL 3 (CBC-CAL-001 v0.4).
-- The photoreal renders (`media/render-*.png`), `media/card.png`, `media/social-preview.png` and the appearance model `cad/src/product_model.py` still show the concept saddles, arm joint, head fixing and pole-top mount; they need updating on Amish's Mac, where Blender is.
+- The photoreal renders (`media/render-*.png`), `media/card.png`, `media/social-preview.png` and the appearance model `cad/src/product_model.py` still show the concept saddles, arm joint, head fixing and pole-top mount; they need updating on Amish's Mac, where Blender is, to the window frame and M5 bolts of P4 (register item 9), with the notice plate at its installed 2.6 m (item 5) and without the head status light (item 7).
 - The enclosure part, its boss spacing and lug kit, the panel's frame lip, the band size for the site pole and the sleeve tube's bore are to be confirmed when parts are bought (CBC-DEC-001).

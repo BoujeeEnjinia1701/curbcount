@@ -3,9 +3,9 @@ doc_id: CBC-DDR-001
 title: CurbCount TRL 2 review decisions
 project: CurbCount
 doc_type: Design decision record
-version: "0.2"
+version: "0.3"
 status: Draft
-date: '2026-09-25'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -17,12 +17,16 @@ revisions:
   date: '2026-09-25'
   author: Amish Chadha
   change: Recommendations accepted by Amish (DDR-002)
+- version: "0.3"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: "O1 decided by Amish on 2026-10-02 (CBC-DEC-001, item 2)"
 ---
 
 # 0001: TRL 2 review decisions
 
 - **Date:** 2026-09-25
-- **Status:** accepted (v0.2). On 2026-09-25 Amish wrote "i accept all your recommendations, go with them across all repos." Items D1 to D7 and O2 are now decided as recommended; O1 had no recommendation and remains "Proposed, awaiting Amish". CBC-DDR-002 records what changed in the repo.
+- **Status:** accepted (v0.2). On 2026-09-25 Amish wrote "i accept all your recommendations, go with them across all repos." Items D1 to D7 and O2 are now decided as recommended; O1 had no recommendation and remains "Proposed, awaiting Amish". CBC-DDR-002 records what changed in the repo. O1 was decided by Amish on 2026-10-02 as recommended in the design decisions register (CBC-DEC-001, item 2): "i approve your recommendations for all 555 open decisions."
 
 ## Context
 
@@ -50,7 +54,7 @@ The options for each item are those listed in `docs/REVIEW.md` (session 2026-09-
 
 | # | Item | Status |
 | --- | --- | --- |
-| O1 | First co-design partner and street (city transport department, residents' group or university). No recommendation was made. | Proposed, awaiting Amish |
+| O1 | First co-design partner and street (city transport department, residents' group or university). No recommendation was made. | Decided by Amish, 2026-10-02 (CBC-DEC-001, item 2): a city transport department that already runs manual or loop counts on a street with a bike lane and 60 to 140 mm poles, first trial in a season with air under 20 °C; first candidate to approach, the City of Toronto's transportation services. Nothing is agreed with any partner. |
 | O2 | The budget figure (D1). The TRL 3 review recommended option (b): $275 with the STM32WL-only design (about $253). `budget_usd` is now $275. | Decided by Amish, 2026-09-25: go with recommendation |
 
 No reworded pitch or problem line was recommended at TRL 2, so `project.yaml` and `README.md` keep the existing wording.

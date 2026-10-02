@@ -1,5 +1,44 @@
 # Review note: CurbCount
 
+## Session 2026-10-02: open decisions decided by Amish
+
+Amish wrote on 2026-10-02: "i approve your recommendations for all 555 open decisions." Every open decision in this repo's register was decided as recommended and moved to "Decisions made" in `docs/06-design-decisions.md`, dated 2026-10-02.
+
+### Decisions recorded
+
+9 decisions recorded (register items 1 to 9). The register's "Open decisions" section now reads: "None. All open decisions were decided on 2026-10-02."
+
+### Documents changed
+
+- `docs/06-design-decisions.md` v0.3
+- `docs/decisions/0003-design-for-construction.md` v0.3
+- `docs/decisions/0001-trl2-review-decisions.md` v0.3
+- `docs/decisions/0002-recommendations-accepted.md` v0.2
+- `docs/01-problem.md` v0.8
+- `docs/02-concept.md` v0.7
+- `docs/05-build-plan.md` v0.3 (CBC-DDR-003 recorded as accepted)
+
+PDFs re-rendered with `python3 .kit/render.py`. The CAD model, BOM quantities and prices, and pictures were not changed.
+
+### Follow-up actions to carry approved decisions into the design
+
+1. Decision 3 (documents): Raise the common pin order, per-project port supply module and service-header jumper with the FieldNode project so FND-DDR-001 O2 can be decided there; AirStreet needs 5 V on its port A. FieldNode was not edited.
+2. Decision 3 (BOM): Once FieldNode agrees the pin order, replace "(to agree with FieldNode)" in the BOM line 11 description with the agreed pin order.
+3. Decision 4 (build plan pictures and renders): Check that the hero render caption says the pole top is drawn 560 mm closer than installed (5.15 m).
+4. Decision 5 (build plan pictures and renders): Set the notice plate to its installed 2.6 m (`NOTICE_Z`) in `cad/src/product_model.py` and re-render on Amish's Mac.
+5. Decision 6 (build plan pictures and renders): Change the plate's raised text in `cad/src/product_model.py` to "No images are stored or sent; only counts leave the device" and re-render; use the same wording on the printed plate face.
+6. Decision 7 (build plan pictures and renders): Remove the status light from the sensor head in `cad/src/product_model.py` and re-render.
+7. Decision 8 (model): Add the embossed "COUNTS ONLY" plaque to the printed head housing in `cad/src/model.py` and its print file, and note it in the BOM line 8 description (no price change).
+8. Decision 9 (build plan pictures and renders): Update the appearance model to the window frame and M5 head bolts of CBC-DDR-003 P4 (with the other P1 to P7 fixings) and regenerate `media/render-*.png`, `media/card.png` and `media/social-preview.png` on Amish's Mac.
+
+### Points found in the review
+
+- Cross-repo conflict: CurbCount's build plan already replaces FieldNode's port A boost converter with a 3.3 V load switch, while AirStreet's build plan uses port A at 5 V for its particle sensor. FieldNode's pinout decision (FND-DDR-001, O2) is still open, so this build plan change runs ahead of FieldNode's agreement.
+- The notice plate wording 'No images are taken or stored' is not strictly accurate: the thermal array captures frames that are processed on the device and can be viewed through the calibration jumper.
+- Item 1's source is 'CBC-DDR-003, A2', but CBC-DDR-003 Table 3 has no A1; the numbering looks like a leftover.
+
+TRL 4 remains on hold by Amish's instruction.
+
 ## Session 2026-09-25: /populate to a strong TRL 2
 
 ### What was done

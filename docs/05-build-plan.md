@@ -3,9 +3,9 @@ doc_id: CBC-BLD-001
 title: CurbCount prototype build plan
 project: CurbCount
 doc_type: Build plan
-version: "0.2"
+version: "0.3"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -17,6 +17,10 @@ revisions:
     date: '2026-10-01'
     author: Amish Chadha
     change: Budget treated as a value-engineering target; cross-references updated
+  - version: "0.3"
+    date: '2026-10-02'
+    author: Amish Chadha
+    change: "CBC-DDR-003 recorded as accepted by Amish on 2026-10-02"
 ---
 
 # CurbCount prototype build plan
@@ -35,7 +39,7 @@ The prototype is one CurbCount counter built on a 2 m length of street pole in t
 
 ## 2. What changed to make it buildable
 
-The concept showed what the counter does; some of its parts could not be made or fixed as drawn. Each change below keeps what the counter does, and all of them are recorded in decision record CBC-DDR-003, open for Amish's review.
+The concept showed what the counter does; some of its parts could not be made or fixed as drawn. Each change below keeps what the counter does, and all of them are recorded in decision record CBC-DDR-003, accepted by Amish on 2026-10-02.
 
 *Table 1. Changes from the concept.*
 

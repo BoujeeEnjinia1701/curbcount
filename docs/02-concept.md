@@ -3,9 +3,9 @@ doc_id: CBC-PRC-001
 title: CurbCount design precis
 project: CurbCount
 doc_type: Design precis
-version: "0.6"
+version: "0.7"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -33,6 +33,10 @@ revisions:
   date: '2026-10-01'
   author: Amish Chadha
   change: Budget treated as a value-engineering target
+- version: "0.7"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: "Decisions of 2026-10-02: CurbCount's sensor port position for FieldNode, first candidate partner, notice plate privacy wording"
 ---
 
 # CurbCount design precis
@@ -119,15 +123,15 @@ All choices below were decided by Amish on 2026-09-25 (CBC-DDR-001 and CBC-DDR-0
 
 > **Safety:** A falling part from 4 to 5.5 m can injure people below. Use a secondary safety lanyard on the panel and the sensor head, torque the sleeve set screws and bands, and check clamps after the first storm.
 
-**Privacy.** No images, audio recordings or personal identifiers leave the device; only aggregate counts are stored or sent. Any change to a higher-resolution sensor needs a fresh privacy review. Check local data protection law before any deployment, and fit the notice plate saying what is counted and where the design is documented.
+**Privacy.** No images, audio recordings or personal identifiers leave the device; only aggregate counts are stored or sent. Any change to a higher-resolution sensor needs a fresh privacy review. Check local data protection law before any deployment, and fit the notice plate saying what is counted, that no images are stored or sent and only counts leave the device, and where the design is documented.
 
 ## Open questions
 
 - Measure HDPE window transmission at 8 to 14 µm and the MLX90640 noise at 16 Hz (TRL 4, on hold).
 - Profile the fixed-point tracker on the STM32WL and check I²C over the 2 m cable on a street pole (TRL 4, on hold).
 - Define the tracker for merged blobs (groups, parents with strollers) and the target accuracy per class.
-- Agree the M12 pinout (I²C and 3.3 V), the calibration jumper on the service header and the 60 to 140 mm pole saddle with the FieldNode project.
+- Agree the M12 pinout, the calibration jumper and the 60 to 140 mm pole saddle with the FieldNode project. CurbCount's position, decided by Amish on 2026-10-02 (CBC-DEC-001, item 3): one common pin order for both ports (supply, ground, I2C data, I2C clock, spare), each port's supply set by a per-project supply module (switched 3.3 V on port A here), and the jumper sensed on FieldNode's service header.
 - Find a side-arm panel mount for poles whose top carries a lantern (suggestion).
-- Choose the first co-design partner and street (awaiting Amish); a hot partner city would bring the radar variant forward.
+- First co-design partner (decided by Amish, 2026-10-02): a city transport department that already runs counts on a street with a bike lane, first trial in a season with air under 20 °C; the first candidate to approach is the City of Toronto's transportation services. A hot partner city or a summer pilot would bring the radar variant forward.
 
 Concept media: [blueprint sheet](../media/concept-blueprint.pdf), [interactive 3D model](../media/viewer.html).

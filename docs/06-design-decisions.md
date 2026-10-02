@@ -3,9 +3,9 @@ doc_id: CBC-DEC-001
 title: CurbCount design decisions register
 project: CurbCount
 doc_type: Design decisions register
-version: "0.2"
+version: "0.3"
 status: Draft
-date: '2026-10-01'
+date: '2026-10-02'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
@@ -17,6 +17,10 @@ revisions:
   date: '2026-10-01'
   author: Amish Chadha
   change: Budget treated as a value-engineering target
+- version: "0.3"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: "Amish approved the recommendations for all nine open decisions on 2026-10-02 (CBC-DDR-003 accepted); moved to decisions made"
 ---
 
 # CurbCount design decisions register
@@ -25,19 +29,7 @@ Every design decision still to be made, and every decision made, in one place. E
 
 ## Open decisions
 
-*Table 1. Decisions still to be made.*
-
-| # | Decision needed | Options | Recommendation | Affects in the build | Source |
-| --- | --- | --- | --- | --- | --- |
-| 1 | Accept the design for construction (saddles, bands through slots, FieldNode constructable core, bolted arm, head fixing and window frame, bolted pole-top mount, cable routes, notice ties) | Accept; or change individual items | Accept | The whole build plan | CBC-DDR-003, A2 |
-| 2 | First co-design partner and street | City transport department, residents' group or university | None made | Pole size and band size; climate (a hot city brings the radar variant forward) | CBC-DDR-002, O1 |
-| 3 | Sensor port pinout, port A's supply voltage and the calibration jumper, agreed with FieldNode | I2C and a switched 3.3 V rail on port A's five pins (the build plan fits a 3.3 V load switch in place of FieldNode's port A boost converter); a jumper-sense pin on FieldNode's service header | Agree with the FieldNode project | Which cores of the sensor cable go to which breakout pin; the port A supply module (build plan section 3.3) | REVIEW 2026-09-25 cross-repo actions; FND-DDR-001, O2 |
-| 4 | Pole top drawn 560 mm lower in the photoreal renders | Accept as render-only layout; or render at the installed height | Accept as render-only | None (renders only) | REVIEW 2026-09-26, item 1 |
-| 5 | Notice plate drawn at 4.15 m in the renders (installed at 2.6 m) | Accept as render-only; or render at 2.6 m | Accept as render-only | None (renders only) | REVIEW 2026-09-26, item 2 |
-| 6 | Notice plate wording | Adopt the proposed wording ("PRIVACY-SAFE COUNTER", what is counted, no images taken or stored, only counts sent, repository link); or reword | Adopt. The fixing is now set by the design for construction (two ties through slots) | The printed face of the notice plate | REVIEW 2026-09-26, item 3 |
-| 7 | Status light on the sensor head | Drop it; or keep it as a public "counting" cue at about 1 mW | Drop it | None in the build plan (no light is fitted) | REVIEW 2026-09-26, item 4 |
-| 8 | "COUNTS ONLY" plaque on the head and the enclosure label | Print or emboss the plaque in the housing and treat the label as part of BOM line 1; or separate parts | Print and treat as BOM line 1 | Head housing print (an optional embossed plaque) | REVIEW 2026-09-26, item 5 |
-| 9 | Head window bezel and head bolts shown in the appearance model | Superseded by the window frame and M5 bolts of the design for construction; update the appearance model to match | Close as superseded once item 1 is accepted | None beyond item 1 | REVIEW 2026-09-26, item 6; CBC-DDR-003, P4 |
+None. All open decisions were decided on 2026-10-02.
 
 ## To confirm when parts are bought
 
@@ -71,4 +63,13 @@ Savings worth trying: leaving port B out of CurbCount's core (about USD 6 less, 
 | 2026-09-25 | TRL 2 items D1 to D7: $275 value-engineering target, thermal array first with radar as the hot-climate variant, FieldNode high-load variant raised with FieldNode, processor study, 15-minute bins and three classes, jumper-only calibration, public notice plate | Amish: "i accept all your recommendations, go with them across all repos." | CBC-DDR-001, CBC-DDR-002 |
 | 2026-09-25 | Tracking on FieldNode's STM32WL as the baseline with the ESP32-S3 head as fallback; one cell and the 6 W panel; R4 restated in px/m; R7 for temperate sites; R11 kept at 6 kg; 10-byte record | Amish, same instruction | CBC-DDR-002, items 3 to 8 |
 | 2026-09-30 | Build plan format approved for all repos; outstanding decisions kept out of the build plan, in this register | Amish: "this is the correct build plan ... this is a good quality document format. Extend this across all the other repos" | This register; CBC-BLD-001 |
-| 2026-09-30 | Make the design physically buildable while drawing the build plan | Amish: "If you are realising that the design cannot be built as per concept - fix the design assumptions to match and be physically feasible as you draw the illustrations." | CBC-DDR-003 (changes made under this instruction, open for review: open decision 1) |
+| 2026-09-30 | Make the design physically buildable while drawing the build plan | Amish: "If you are realising that the design cannot be built as per concept - fix the design assumptions to match and be physically feasible as you draw the illustrations." | CBC-DDR-003 (changes made under this instruction; accepted on 2026-10-02, below) |
+| 2026-10-02 | Design for construction accepted as a whole: the changes P1 to P7 of CBC-DDR-003 and their knock-on changes, as made | Amish: "i approve your recommendations for all 555 open decisions." | CBC-DDR-003, A2 |
+| 2026-10-02 | First co-design partner: a city transport department that already runs manual or loop counts on a street with a bike lane and poles of 60 to 140 mm, with the first trial in a season with air under 20 °C. First candidate to approach: the City of Toronto's transportation services, which publishes its traffic count data | Amish: "i approve your recommendations for all 555 open decisions." | CBC-DDR-002, O1 |
+| 2026-10-02 | Sensor port: CurbCount's position to agree with FieldNode is one common pin order for both ports (supply, ground, I2C data, I2C clock, spare), each port's supply voltage set by a per-project supply module (switched 3.3 V on port A for CurbCount), and the calibration jumper sensed on FieldNode's service header | Amish: "i approve your recommendations for all 555 open decisions." | REVIEW 2026-09-25 cross-repo actions; FND-DDR-001, O2 |
+| 2026-10-02 | Pole top drawn 560 mm lower in the photoreal renders accepted as a render-only layout; the caption says it is drawn closer than installed | Amish: "i approve your recommendations for all 555 open decisions." | REVIEW 2026-09-26, item 1 |
+| 2026-10-02 | Notice plate rendered at its installed 2.6 m, not 4.15 m | Amish: "i approve your recommendations for all 555 open decisions." | REVIEW 2026-09-26, item 2 |
+| 2026-10-02 | Notice plate wording adopted with one fix: "No images are stored or sent; only counts leave the device" replaces "No images are taken or stored"; the rest and the repository link are kept | Amish: "i approve your recommendations for all 555 open decisions." | REVIEW 2026-09-26, item 3 |
+| 2026-10-02 | Status light on the sensor head dropped | Amish: "i approve your recommendations for all 555 open decisions." | REVIEW 2026-09-26, item 4 |
+| 2026-10-02 | "COUNTS ONLY" plaque embossed into the printed head housing (BOM line 8); the enclosure label is part of BOM line 1 | Amish: "i approve your recommendations for all 555 open decisions." | REVIEW 2026-09-26, item 5 |
+| 2026-10-02 | Head window bezel and head bolts of the appearance model closed as superseded by the window frame and M5 bolts of CBC-DDR-003, P4; the appearance model is updated to match when the renders are redone | Amish: "i approve your recommendations for all 555 open decisions." | REVIEW 2026-09-26, item 6; CBC-DDR-003, P4 |
