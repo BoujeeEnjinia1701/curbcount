@@ -3,7 +3,7 @@ doc_id: CBC-DEC-001
 title: CurbCount design decisions register
 project: CurbCount
 doc_type: Design decisions register
-version: "0.3"
+version: "0.4"
 status: Draft
 date: '2026-10-02'
 author: Amish Chadha
@@ -21,6 +21,10 @@ revisions:
   date: '2026-10-02'
   author: Amish Chadha
   change: "Amish approved the recommendations for all nine open decisions on 2026-10-02 (CBC-DDR-003 accepted); moved to decisions made"
+- version: "0.4"
+  date: '2026-10-02'
+  author: Amish Chadha
+  change: Decisions 5 to 9 carried into model.py, the appearance model and the BOM
 ---
 
 # CurbCount design decisions register
@@ -72,4 +76,4 @@ Savings worth trying: leaving port B out of CurbCount's core (about USD 6 less, 
 | 2026-10-02 | Notice plate wording adopted with one fix: "No images are stored or sent; only counts leave the device" replaces "No images are taken or stored"; the rest and the repository link are kept | Amish: "i approve your recommendations for all 555 open decisions." | REVIEW 2026-09-26, item 3 |
 | 2026-10-02 | Status light on the sensor head dropped | Amish: "i approve your recommendations for all 555 open decisions." | REVIEW 2026-09-26, item 4 |
 | 2026-10-02 | "COUNTS ONLY" plaque embossed into the printed head housing (BOM line 8); the enclosure label is part of BOM line 1 | Amish: "i approve your recommendations for all 555 open decisions." | REVIEW 2026-09-26, item 5 |
-| 2026-10-02 | Head window bezel and head bolts of the appearance model closed as superseded by the window frame and M5 bolts of CBC-DDR-003, P4; the appearance model is updated to match when the renders are redone | Amish: "i approve your recommendations for all 555 open decisions." | REVIEW 2026-09-26, item 6; CBC-DDR-003, P4 |
+| 2026-10-02 | Head window bezel and head bolts of the appearance model closed as superseded by the window frame and M5 bolts of CBC-DDR-003, P4; the appearance model was updated to match on 2026-10-02 | Amish: "i approve your recommendations for all 555 open decisions." | REVIEW 2026-09-26, item 6; CBC-DDR-003, P4 |

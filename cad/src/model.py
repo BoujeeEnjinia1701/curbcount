@@ -54,6 +54,8 @@ PARAMS = {
     "head_screws": (47.0, 37.0),                   # M3 frame screws into heat-set inserts in four corner bosses
     "wedge_x": (30.0, 120.0), "wedge_min": 3.0,    # printed wedge pad under the arm (world x span), thinnest point
     "head_bolts_x": (45.0, 105.0),                 # M5 bolts through the arm into the wedge pad (world x)
+    "plaque": (64.0, 16.0, 0.8, 6.0),              # embossed "COUNTS ONLY" plaque on the housing's road-side face (-Y): width, height, relief, centre height in the head frame
+    "plaque_text": ("COUNTS ONLY", 7.0, 0.4),      # lettering embossed on the plaque: text, letter height, relief
     # 7 sensor arm: 40 x 40 x 2 aluminium tube, butted to its saddle plate and held by two angle brackets
     "arm": (40.0, 2.0), "saddle": (3.0, 160.0, 250.0), "arm_band_dz": 110.0, "arm_vs_dz": 75.0,
     "arm_bracket": (40.0, 4.0, 40.0),              # angle leg, thickness, width
@@ -614,6 +616,14 @@ def build_components(p=PARAMS):
     bosses = fuse(box(s1 * (iw / 2 - 5), s2 * (ih / 2 - 5), -hz / 2 + 3 + 6, 10, 10, 12) for s1 in (-1, 1) for s2 in (-1, 1))
     stand = fuse(zcyl(s1 * 12, s2 * 9, (-13 + hz / 2 - hw) / 2, 3.0, hz / 2 - hw + 13) for s1 in (-1, 1) for s2 in (-1, 1))
     housing = shell + hood + ledge + bosses + stand
+    # embossed "COUNTS ONLY" plaque (decision 2026-10-02): a raised pad on the -Y face with raised letters, printed with the housing
+    pw_, ph_, pt_, pz_ = p["plaque"]
+    housing += box(0, -hy / 2 - pt_ / 2 + 0.05, pz_, pw_, pt_ + 0.1, ph_)
+    txt, tsz, trel = p["plaque_text"]
+    letters = b.extrude(b.Plane(origin=(0, -hy / 2 - pt_, pz_), x_dir=(1, 0, 0), z_dir=(0, -1, 0))
+                        * b.Text(txt, font_size=tsz, font_path=str(Path(__file__).resolve().parents[2] / ".kit" / "fonts" / "IBMPlexSans-SemiBold.ttf"),
+                                 align=(b.Align.CENTER, b.Align.CENTER)), amount=trel)
+    housing += letters
     for s1 in (-1, 1):
         for s2 in (-1, 1):
             housing -= zcyl(s1 * sx_, s2 * sy_, -hz / 2 + 6, 1.5, 12.2)
@@ -909,6 +919,9 @@ def checks(p=PARAMS):
     chk("End cap on the tube", S("arm_cap"), S("arm_tube"), "touch")
     # head
     chk("Head wedge pad under the arm", S("housing"), S("arm_tube"), "touch")
+    rel = p["plaque"][2] + p["plaque_text"][2]
+    rows.append(("Embossed plaque relief at least 1.0 mm (pad plus letters), letters at least 0.4 mm", 0.0, rel, 1.0,
+                 rel >= 1.0 and p["plaque_text"][2] >= 0.4))
     chk("Head housing clear of the arm cap", S("housing"), S("arm_cap"), 0.0)
     chk("Film on the housing ledge", S("film"), S("housing"), "touch")
     chk("Window frame on the film", S("frame"), S("film"), "touch")

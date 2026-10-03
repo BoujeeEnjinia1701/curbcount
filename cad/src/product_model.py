@@ -1,23 +1,22 @@
 """CurbCount product appearance model (build123d), TRL 3.
 
 Finished-product look for photoreal renders of the privacy-safe street counter: a filleted
-sensor head with its sun hood, a dark window bezel with a parting step, the HDPE window and the
-thermal array visible behind it, a teal "counts only" plaque and a lit status light; a rounded
+sensor head with its sun hood, a dark printed window frame, the HDPE window and the
+thermal array visible behind it, an embossed "counts only" plaque (no status light on the head); a rounded
 aluminium arm with an end cap on its saddle plate; stainless band clamps with worm-drive
 housings; the FieldNode enclosure with its lid, lid screws, label, status light, knurled M12
 ports, cable gland, vent and whip antenna; the power board, controller and LiFePO4 cell inside;
 the 6 W panel with cell grid, glass and junction box on its pole-top mount; the sensor cable with
 rounded bends; and the public notice plate with raised text stating that counting happens on the
-device and no images are taken or stored. Context is a short section of the 114 mm street pole.
+device and no images are stored or sent. Context is a short section of the 114 mm street pole.
 APPEARANCE MODEL ONLY: no tolerances, no fabrication detail. CONCEPT, NOT FOR FABRICATION.
 
 Every main dimension and interface comes from PARAMS, derived() and build_parts() in model.py.
 Axes as model.py: road at Z = 0, curb face at X = 0, sidewalk toward -X, street along Y.
 The sensor head, arm, saddles, clamps, enclosure and cable are at their model.py positions.
-For a compact product render two things are shown closer than installed (see docs/REVIEW.md,
-session 2026-09-26): the pole top with its mount and panel is drawn TOP_DROP lower, and the
-public notice plate is drawn just above the enclosure (NOTICE_Z) instead of at eye height.
-All sizes are unchanged.
+For a compact product render one thing is shown closer than installed (decided 2026-10-02): the
+pole top with its mount and panel is drawn TOP_DROP lower. The public notice plate is at its
+installed height (NOTICE_Z = notice_z of model.py). All sizes are unchanged.
 
     from product_model import product_parts
     for p in product_parts(): print(p["name"], p["group"], p["material"])
@@ -38,8 +37,8 @@ TITLE = "CurbCount: privacy-safe street counter for people, bikes and vehicles"
 RENDER_VIEWS = [
     {"name": "hero", "groups": ["shell", "internal", "context"], "explode": False, "el": 20, "az": -128,
      "note": "Product render from the sidewalk side, front left and above (about 20 deg elevation); notice plate "
-             "and FieldNode enclosure on the pole, sensor head on its arm reaching over the street. Pole top and "
-             "notice are drawn closer than installed"},
+             "and FieldNode enclosure on the pole, sensor head on its arm reaching over the street. Pole top is "
+             "drawn 560 mm closer than installed (5.15 m)"},
     {"name": "exploded", "groups": ["shell", "internal", "accessory"], "explode": True, "el": 28, "az": -128,
      "note": "Exploded view from the sidewalk side, front left and above (about 28 deg elevation): sensor head "
              "housing, hood, window, bezel and thermal array; arm and clamps; enclosure, lid, power board, "
@@ -51,8 +50,8 @@ RENDER_VIEWS = [
 
 # Render layout (not the installed layout); see the module docstring.
 TOP_DROP = 560.0          # pole top, sleeve, post, hinge plate and panel drawn this much lower
-NOTICE_Z = 4150.0         # notice plate centre, drawn between the enclosure saddle and the arm clamps
-POLE_Z0 = 3500.0          # bottom of the context pole section
+NOTICE_Z = PARAMS["notice_z"]   # notice plate centre at its installed height (2.6 m, decision 2026-10-02)
+POLE_Z0 = PARAMS["notice_z"] - PARAMS["notice"][2] / 2 - 150.0   # bottom of the context pole section, below the notice plate
 
 # Colours (restrained product palette; kit accent)
 C_HEAD = "#EEF0F2"
@@ -160,25 +159,27 @@ def product_parts(P=PARAMS):
     hx, hy, hz = P["head"]
     hw = P["head_wall"]
     HF = Pos(P["head_x"], 0, D["head_zc"]) * Rot(0, -P["tilt"], 0)
-    bez_h = 6.0
     E_HEAD = (0, 0, 0)
 
     shell = _rbox(hx, hy, hz, r_z=12.0, r_top=4.0)
     shell -= Pos(0, 0, -hw) * _rbox(hx - 2 * hw, hy - 2 * hw, hz, r_z=9.0)
-    shell &= Pos(0, 0, bez_h / 2 + 0.3) * Box(hx + 2, hy + 2, hz - bez_h + 0.6)   # stops above the bezel
     add("Sensor head housing (ASA)", HF * shell, C_HEAD, "plastic", 8, "shell", E_HEAD)
 
     hood = Pos(10, 0, hz / 2 + P["hood"][2] / 2) * _rbox(*P["hood"], r_z=14.0, r_top=1.5, r_bot=0.8)
     add("Sun hood", HF * hood, C_HOOD, "plastic", 8, "shell", (0, 0, 110))
 
-    # bezel frame: slightly inset for a visible parting step, window slot, open aperture
-    wx, wy, _ = P["window"]
-    bez = Pos(0, 0, -hz / 2 + bez_h / 2) * _rbox(hx - 1.0, hy - 1.0, bez_h, r_z=11.5, r_bot=1.5)
-    bez -= Pos(0, 0, -hz / 2) * _rbox(wx - 8, wy - 8, 2 * bez_h + 2, r_z=5.0)
-    bez -= Pos(0, 0, -hz / 2 + 2) * Box(wx + 0.4, wy + 0.4, 1.2)
-    bez -= Pos(0, 0, -hz / 2 + bez_h) * _rbox(wx + 0.4, wy + 0.4, 5.0, r_z=5.0)
-    add("Window bezel and gasket", HF * bez, C_DARK, "rubber", 8, "shell", (0, 0, -150))
-    win = Pos(0, 0, -hz / 2 + 2) * _rbox(wx, wy, 1.0, r_z=4.0)
+    # printed window frame (BOM 8, model.py "frame"): clamps the film to the housing ledge with four M3 screws
+    wx, wy, film_t = P["window"]
+    fw, lg = P["frame_t"], P["ledge"]
+    iw, ih = hx - 2 * hw, hy - 2 * hw
+    zf = -hz / 2 - film_t - fw / 2
+    frm = Pos(0, 0, zf) * _rbox(hx, hy, fw, r_z=12.0, r_bot=1.0)
+    frm -= Pos(0, 0, zf) * _rbox(iw - 2 * lg, ih - 2 * lg, fw + 2, r_z=5.0)
+    add("Window frame (ASA)", HF * frm, C_DARK, "plastic", 8, "shell", (0, 0, -150))
+    sxs, sys_ = P["head_screws"]
+    scr = [Pos(s1 * sxs, s2 * sys_, zf - fw / 2 - 0.8) * Cylinder(2.75, 1.6) for s1 in (-1, 1) for s2 in (-1, 1)]
+    add("Window frame screws, M3 (4)", HF * _union(scr), C_STEEL, "metal", 13, "shell", (0, 0, -190))
+    win = Pos(0, 0, -hz / 2 - film_t / 2) * _rbox(wx, wy, film_t, r_z=4.0)
     add("LWIR window, HDPE", HF * win, C_WINDOW, "clear", 9, "shell", (0, 0, -110))
 
     # thermal array: breakout board, sensor can and lens, as model.py
@@ -191,15 +192,15 @@ def product_parts(P=PARAMS):
     lens = Pos(0, 0, -hz / 2 + 8.2) * Sphere(2.2) & Pos(0, 0, -hz / 2 + 7.0) * Box(6, 6, 2.6)
     add("Thermal array lens", HF * lens, C_BLACK, "screen", 10, "internal", (0, 0, -70))
 
-    # teal "counts only" plaque on the -Y face and status light
+    # embossed "COUNTS ONLY" plaque on the -Y face, printed with the housing (model.py "plaque"); no status light
     fy = -hy / 2
-    plq = Pos(0, fy - 0.3, 6.0) * _rbox(64.0, 0.6, 16.0, r_z=0.0)
+    pw_, ph_, pt_, pz_ = P["plaque"]
+    txt, tsz, trel = P["plaque_text"]
+    plq = Pos(0, fy - pt_ / 2, pz_) * _rbox(pw_, pt_, ph_, r_z=0.0)
     plq = _fillet_try(plq, plq.edges().filter_by(Axis.Y), [3.0, 1.5])
-    add("Head plaque", HF * plq, C_ACCENT, "plastic", 8, "shell", E_HEAD)
-    pl = Plane(origin=(0, fy - 0.6, 6.0), x_dir=(1, 0, 0), z_dir=(0, -1, 0))
-    add("Head plaque text", HF * _text("COUNTS ONLY", 7.0, pl, 0.3), C_WHITE, "plastic", 8, "shell", E_HEAD)
-    led = Pos(-40.0, fy, 22.0) * (Sphere(2.2) & Pos(0, -2, 0) * Box(5, 4, 5))
-    add("Head status light", HF * led, C_LED, "emissive", 8, "shell", E_HEAD)
+    add("Head plaque", HF * plq, C_HEAD, "plastic", 8, "shell", E_HEAD)
+    pl = Plane(origin=(0, fy - pt_, pz_), x_dir=(1, 0, 0), z_dir=(0, -1, 0))
+    add("Head plaque text", HF * _text(txt, tsz, pl, trel), C_ACCENT, "plastic", 8, "shell", E_HEAD)
 
     # ============ arm (BOM 7): rounded 40 x 40 tube, end cap, saddle plate and bolts
     a, at = P["arm"]
@@ -218,11 +219,11 @@ def product_parts(P=PARAMS):
     add("Arm saddle plate", sad, C_ALU, "metal", 7, "shell", (0, 0, 0))
     # two bolts through the arm into the hood mounting boss
     bolts = []
-    for bx in (P["head_x"] - 25.0, P["head_x"] + 25.0):
-        h = Pos(bx, 0, az_ + a / 2 + 1.5) * Cylinder(6.5, 3.0)
+    for bx in P["head_bolts_x"]:                                   # M5 bolts, heads 8 mm across flats
+        h = Pos(bx, 0, az_ + a / 2 + 1.75) * Cylinder(4.6, 3.5)
         h = _fillet_try(h, h.faces().sort_by(Axis.Z)[-1].edges(), [0.8, 0.4])
         bolts.append(h)
-    add("Head mounting bolts", _union(bolts), C_STEEL, "metal", 13, "shell", (0, 0, 60))
+    add("Head mounting bolts, M5 (2)", _union(bolts), C_STEEL, "metal", 13, "shell", (0, 0, 60))
 
     # ============ band clamps (BOM 6): four bands, enclosure saddle plate
     bw = P["band_w"]
@@ -425,8 +426,7 @@ def product_parts(P=PARAMS):
     head_t = _text("PRIVACY-SAFE COUNTER", 10.5, tp(nz / 2 - 22), 0.3)
     add("Notice header text", head_t, C_WHITE, "painted", 12, "shell", E_NOT)
     lines = [("Counts people, bikes and", 9.0, 44), ("vehicles on the device.", 9.0, 30),
-             ("No images are taken", 9.5, 4), ("or stored.", 9.5, -10),
-             ("Only counts are sent.", 9.0, -36), ("github.com/BoujeeEnjinia1701/curbcount", 5.2, -70)]
+             ("No images are stored or sent;", 8.2, 2), ("only counts leave the device.", 8.2, -14), ("github.com/BoujeeEnjinia1701/curbcount", 5.2, -70)]
     body_t = _union([_text(s, sz_, tp(z, xfn), 0.4) for s, sz_, z in lines])
     add("Notice text", body_t, C_TEXT, "painted", 12, "shell", E_NOT)
     rivets = [Pos(xfn - 0.6, yy, NOTICE_Z + zz) * (Sphere(3.0) & Pos(-2, 0, 0) * Box(4, 8, 8))

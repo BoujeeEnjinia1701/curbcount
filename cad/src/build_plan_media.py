@@ -24,7 +24,7 @@ from model import PARAMS as P, build_components, derived, pole_stub, fuse, _vsad
 
 OUT = ROOT / "docs" / "05-build-plan"
 DWG = ROOT / "cad" / "drawings"
-DATE = "2026-09-30"
+DATE = "2026-10-02"
 REPO = "github.com/BoujeeEnjinia1701/curbcount"
 D = derived(P)
 C = build_components(P)
@@ -265,6 +265,8 @@ def sheets(only=None):
                    "  level under the arm. Press in two M5 heat-set inserts, 60 apart.",
                    "End wall (pole side): 16.2 mm hole, 15 mm off centre, for the gland.",
                    "Drill a 5 mm lanyard hole in the hood's road-side overhang.",
+                   "Road-side wall: a raised plaque 64 x 16 mm, 0.8 mm high, with",
+                   "  COUNTS ONLY in 7 mm letters 0.4 mm higher, printed in the housing.",
                    "Check: the wedge top is flat; the ledge face is flat for the film."], **base))
 
     if want(108):
@@ -414,8 +416,8 @@ def sheets(only=None):
             notes=["Blank 150 x 200 mm of 2 mm aluminium; round the corners 5 mm.",
                    "Four tie slots 3 x 10 mm, 60 mm each side of the centre line,",
                    "  centred 30 and 170 mm up from the bottom edge.",
-                   "Print or apply a UV-stable face: what is counted, that no images",
-                   "  are kept, and the repository link.",
+                   "Print or apply a UV-stable face: what is counted, \"No images are",
+                   "  stored or sent; only counts leave the device\", and the repository link.",
                    "Fit: the back lies against the pole, centred on it; two stainless",
                    "  steel cable ties pass round the pole and through the slots.",
                    "At the site it goes at eye height, about 2.6 m up, facing the",

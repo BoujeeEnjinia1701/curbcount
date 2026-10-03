@@ -344,3 +344,30 @@ The photoreal renders (`media/render-*.png`), `media/card.png`, `media/social-pr
 ### Recommended next step
 
 Amish reviews CBC-DDR-003 and the register. TRL 4 (building and testing to the plan) stays on hold by his instruction.
+
+## Session 2026-10-02: approved follow-ups carried out
+
+Amish approved on 2026-10-02 that every follow-up action from the open-decision sign-off be carried out. Results for the 8 follow-ups listed above:
+
+1. Decision 3, raise the pin order, supply module and service-header jumper with FieldNode: not done here, it lives in the FieldNode project (see Cross-repo actions).
+2. Decision 3, BOM line 11 pin order: not done, it waits for FieldNode to agree the pin order; the "(to agree with FieldNode)" wording stays until then.
+3. Decision 4, hero caption: done. The hero view note in `cad/src/product_model.py` now says the pole top is drawn 560 mm closer than installed (5.15 m).
+4. Decision 5, notice plate height: done. `NOTICE_Z` is now the installed 2.6 m (taken from `notice_z` in `model.py`) and the context pole section starts below the plate.
+5. Decision 6, notice wording: done in the appearance model, the BOM line 12 description and the notice plate making sketch and build plan: "No images are stored or sent; only counts leave the device".
+6. Decision 7, head status light: done. Removed from the sensor head in the appearance model (the enclosure status light stays).
+7. Decision 8, embossed plaque: done. A raised "COUNTS ONLY" plaque (pad 64 x 16 mm, 0.8 mm relief, letters 0.4 mm higher) is part of the head housing in `cad/src/model.py`, so it is in `cad/step` and `cad/stl` (the print file); BOM line 8 states it, no price change. A check for the relief was added; all 107 constructability checks pass.
+8. Decision 9, appearance model: done for the model. The bezel is replaced by the printed window frame (110 x 90 x 3 mm, film under it) with four M3 screws, and the head bolts are the two M5 bolts at the model's positions. Photoreal renders, `media/card.png` and `media/social-preview.png` are made on Amish's Mac and are not done here. The render scenes are exported to `/home/claude/renders/curbcount`.
+
+Requirement status changes: none. Cost stays USD 274.00 against `budget_usd` 275 and mass 5.26 kg (the plaque adds about 1 g); `results.csv` is unchanged.
+
+Pictures regenerated: general arrangement CBC-DWG-001 (Rev P5), all making sketches CBC-DWG-101 to 116 (dated 2026-10-02; 107 shows the plaque, 116 the notice wording) and the concept media. `drawing.py --check-text` reports no hits. Build plan joint and step pictures are unchanged because the plaque is 1.2 mm relief on a face none of them shows.
+
+Documents changed: CBC-BLD-001 v0.4, CBC-DEC-001 v0.4, `bom/bom.csv`, `cad/src/model.py`, `cad/src/product_model.py`.
+
+### Cross-repo actions
+
+- FieldNode: publish the common pin order (supply, ground, I2C data, I2C clock, spare), per-project port supply modules (switched 3.3 V on port A for CurbCount, 5 V on port A for AirStreet) and the calibration jumper on the service header, so FND-DDR-001 O2 can be decided there. Then CurbCount BOM line 11 states the agreed pin order.
+
+## 2026-10-02: photoreal renders redone on the constructable design
+
+Rendered with Blender Cycles on Amish's Mac from the updated appearance model; captioned with `.kit/photo_caption.py`; `media/card.png` and `media/social-preview.png` regenerated with `.kit/cards.py`. Views: hero, exploded, detail. image_qc passes. Appearance deviations are those logged above as proposed, awaiting Amish.

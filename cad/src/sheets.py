@@ -100,13 +100,14 @@ def main():
     asm = Compound(children=[v for kk, v in parts.items() if kk != "notice"] + [pole])
     views = safe_project_views(asm, work)
     bb = asm.bounding_box()
-    s = Sheet(project="CurbCount", title="General arrangement", dwg_no="CBC-DWG-001", rev="P4",
-              author="Amish Chadha", date=DATE, scale=None, theme="technical",
+    s = Sheet(project="CurbCount", title="General arrangement", dwg_no="CBC-DWG-001", rev="P5",
+              author="Amish Chadha", date="2026-10-02", scale=None, theme="technical",
               material="Aluminium mounts, ASA head; bought-in parts per bom/bom.csv. PRELIMINARY, NOT FOR FABRICATION",
               revisions=[("P1", "Preliminary GA for TRL 3 (from cad/src/model.py)", "2026-09-25", "AC"),
                          ("P2", "DDR-002: 6 W panel, one cell, no head processor", "2026-09-25", "AC"),
                          ("P3", "Layout and labels tidied", "2026-09-25", "AC"),
-                         ("P4", "DDR-003: design for construction (saddles, brackets, bolted mount)", DATE, "AC")])
+                         ("P4", "DDR-003: design for construction (saddles, brackets, bolted mount)", DATE, "AC"),
+                         ("P5", "Embossed COUNTS ONLY plaque on the head housing", "2026-10-02", "AC")])
     s.add_ortho(views)
     k = s.scale
     c = ortho_cells(s, views)

@@ -3,7 +3,7 @@ doc_id: CBC-BLD-001
 title: CurbCount prototype build plan
 project: CurbCount
 doc_type: Build plan
-version: "0.3"
+version: "0.4"
 status: Draft
 date: '2026-10-02'
 author: Amish Chadha
@@ -21,6 +21,10 @@ revisions:
     date: '2026-10-02'
     author: Amish Chadha
     change: "CBC-DDR-003 recorded as accepted by Amish on 2026-10-02"
+  - version: "0.4"
+    date: '2026-10-02'
+    author: Amish Chadha
+    change: Embossed COUNTS ONLY plaque on the head housing; notice plate wording; making sketches CBC-DWG-107 and CBC-DWG-116 redrawn
 ---
 
 # CurbCount prototype build plan
@@ -228,7 +232,7 @@ The heel of each bracket sits in the corner between the plate and the tube: the 
 
 *Figure 17. Head housing making sketch (CBC-DWG-107), drawn level; it hangs tilted 7.5° toward the road.*
 
-**What it is and what it is made from.** The box that holds the thermal array, open underneath for the window, with a sun hood on top and a wedge pad that sets the tilt. ASA, printed in one piece: housing 110 x 90 x 70 mm, walls 3 mm, hood 150 x 120 x 4 mm.
+**What it is and what it is made from.** The box that holds the thermal array, open underneath for the window, with a sun hood on top and a wedge pad that sets the tilt. ASA, printed in one piece: housing 110 x 90 x 70 mm, walls 3 mm, hood 150 x 120 x 4 mm, with a raised "COUNTS ONLY" plaque on the road-side wall (a pad 64 x 16 mm and 0.8 mm high, with 7 mm letters standing 0.4 mm higher) printed as part of the housing.
 
 **How to make it.**
 
@@ -237,6 +241,7 @@ The heel of each bracket sits in the corner between the plate and the tube: the 
 3. With a heat-set insert tool, press an M3 insert into each of the four corner bosses from below (47 and 37 mm each side of centre), and an M5 insert into each of the two holes in the wedge pad (60 apart).
 4. Ream the 16.2 mm gland hole in the pole-side end wall, 15 mm off centre.
 5. Drill a 5 mm lanyard hole through the hood's road-side overhang, 10 mm in from its edge.
+6. Check the raised plaque on the road-side wall: the letters must be crisp and the pad flat. Do not sand it.
 
 **How it fits the parts next to it.**
 
@@ -398,13 +403,13 @@ The foot stands on the cap disc between the lower clips (Figure 26); the head si
 
 *Figure 32. Notice plate making sketch (CBC-DWG-116).*
 
-**What it is and what it is made from.** The public notice: what is counted, that no images are kept, and where the design is published. Aluminium sheet 2 mm, 150 x 200 mm, with a UV-stable printed face.
+**What it is and what it is made from.** The public notice: what is counted, "No images are stored or sent; only counts leave the device", and where the design is published. Aluminium sheet 2 mm, 150 x 200 mm, with a UV-stable printed face.
 
 **How to make it.**
 
 1. Cut 150 x 200 mm; round the corners 5 mm.
 2. Four tie slots 3 x 10 mm, 60 each side of the centre line, centred 30 and 170 up from the bottom edge. Chain drill and file.
-3. Print or apply the UV-stable face.
+3. Print or apply the UV-stable face with the wording above.
 
 **How it fits the parts next to it.**
 
