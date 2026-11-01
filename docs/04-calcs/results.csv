@@ -9,7 +9,7 @@ R7,"Mild design day: 10.2 h sunlit below single-frame contrast, 3.2 h with track
 R8,6.22 d (one cell); 4.36 d at -20 C; 4.98 d at end of life,3 days of continuous counting,Met on paper (one cell)
 R9,4.4 Wh/day stored against 2.47 Wh/day (6 W),"Energy neutral at 1.5 peak sun hours, 40 % derating",Met on paper (6 W)
 R10,"IP65 enclosure (FieldNode), gasketed head with film window",IP65,Not verifiable at TRL 3
-R11,5.26 kg,6 kg or less,Met on paper
+R11,5.24 kg,6 kg or less,Met on paper
 R12,"Install estimate 59 min; panel 52 N, post factor 55, twist factor 3.3","Two people, 60 min, no drilling; 35 m/s gusts",Not verifiable at TRL 3 (wind and fit met on paper)
 R13,$274.00,$275 or less (budget_usd),Met on paper
 R14,Nightly depth of discharge 9 %; window UV and cell heat unknown,"5 years, one battery change",Not verifiable at TRL 3

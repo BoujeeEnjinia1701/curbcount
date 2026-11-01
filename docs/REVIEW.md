@@ -1,5 +1,55 @@
 # Review note: CurbCount
 
+## Session 2026-10-24: kit 1.9.1 upgrade
+
+Run on 2026-10-31 under the kit 1.9.1 rollout brief (the heading uses the brief's session name). The repo moved from kit 1.7 to kit 1.9.1 at TRL 3, stage P3, with nothing pushed and no TRL 4 work.
+
+### What was added
+
+- Pipeline documents: STEM check (`docs/01b-stem-check.md`, `docs/04-calcs/stem_check.py`, `stem_results.csv`), concept options (`docs/02a-concept-options.md`), user requirements (`docs/03a-user-requirements.md`, 16 URs), product requirements (`docs/03-requirements.md` v0.7, now CBC-PRS-001, 21 PRs with the old R numbers in the Was column), the generated traceability matrix (`docs/03b-traceability.md`, 0 gaps), regulatory register, feasibility, risk register with hazard analysis and design FMEA, market, project plan (`docs/07-regulatory.md` to `docs/11-plan.md`), concept selection record `docs/decisions/0004-concept-options.md`, and the register `docs/06-design-decisions.md` v0.5 (O1 to O4, C1, C2). The calculation note is v0.5 (mass 5.24 kg, hood-height note).
+- CAD: `cad/src/model.py` rebuilt to the kit 1.9 interface (`PARAMS`, `OPTIONS`, `PRINCIPLES`, `CHOSEN = "A"`, `OPTION_VIEWS`, `ALLOWED_CONTACTS`, `components(option)`) with every bolt, nut, screw, spacer, rivet nut and set screw as its own part, holes and countersinks cut, stock sections for tube, angle and bar, a panel frame with lip holes. Repo helpers in `cad/src/cc_parts.py`. `PARAMS` and `derived()` are identical to the kit 1.7 model (compared), so no design dimension changed. The old API used by `sizing.py`, `sheets.py` and `build_plan_media.py` is kept.
+- Regenerated: STEP per assembly and per part (`cad/step/`), STL for each option at tolerance 0.2 mm, `CBC-DWG-001` Rev P6 and the making sketches `CBC-DWG-101` to `116`, the build plan pictures, the concept media (`media/hero.png`, blueprint, cutaway, exploded, flow, `model.glb` 2.2 MB).
+- `cad/src/product_model.py`: `product_parts()`, `TITLE`, `RENDER_VIEWS` (hero, studio, head). The hero is a site view (ground at z = 0, "(site)" parts reaching below ground, a "(scale)" person on the sidewalk, sun azimuth -112 against camera azimuth -128). Not rendered here.
+
+### STEM verdicts and fixes
+
+31 claims: 13 within known science, 14 plausible, 4 fail with a fix proposed, none fails outright; `stem_check: open`. Fixed under the standing instruction of 2026-10-23: option B's radar energy (S22, S23), duty-cycled to 0.2 W average (CBC-DEC-001 C1). Proposed to Amish, not implemented (shared FieldNode core): S5 frames per car (3.2 at the hood, fix 32 Hz subpages on a 1 MHz bus, O3), S8 cold charging (O1), S26 and S28 option B hot-site cell and charger (O4). The independent review (a headless `claude -p --model claude-opus-5-5` session that saw only the STEM check, CAL, PRS and the scripts) refuted S5, S20 and S23, weakened S6, S8, S14, S15, S17, S22, and added missing rows S25 to S31; details in the STEM check's Independent review section.
+
+### Options, scores and part counts (from `cad/fidelity.json`, D3 pass)
+
+| Option | Parts | Fasteners | Mass (CAD) | Score (of 165) |
+| --- | --- | --- | --- | --- |
+| A, thermal array head | 127 | 81 | 4.8 kg | 121 (73.3 %) |
+| B, 60 GHz radar head | 128 | 81 | 5.2 kg | 110 (66.7 %) |
+
+The gap is 9.1 %, inside the 10 % band, so both go to Amish without a pick; `concept_chosen` is unset. `sizing.py` gives 5.24 kg for option A with bought parts at catalogue mass.
+
+### Requirements not met or at risk
+
+None is not met. At risk: PR-001 (frames per car), PR-002 (merging), PR-008 (sunlit pavement), PR-010 (cold charging), PR-016 (cost margin 1.00 USD). To verify at TRL 4: PR-003, PR-007, PR-011, PR-013, PR-017. BOM total 274.00 USD against `budget_usd` 275 (unchanged).
+
+### Decisions proposed, awaiting Amish
+
+- O1 cold charging below about 0 degrees C (recommend limiting the claim to cool sites now and raising a heated pocket or low-temperature cell with FieldNode).
+- O2 concept choice, A against B (within 10 %; lean A as the build with B as the hot-climate variant, as decided on 2026-09-25).
+- O3 vehicle frames: 32 Hz subpages and 1 MHz I2C (recommended; needs FieldNode to agree).
+- O4 option B only: FieldNode's high-load charger and a hot-site shield.
+
+### Safety concerns
+
+Work at height on a street pole (a partner's procedure is to assess), a falling part (bands, spacers and lanyards are the controls), a lithium cell charged only above 0 degrees C, and the privacy promise: the calibration jumper streams frames to a laptop during an aim check, so the claim "no frame leaves the device" holds for normal operation only (STM S20). Option B adds a 60 GHz transmitter whose rules are to assess (REG G9). Nothing was built or tested.
+
+### Kit bugs and gaps met
+
+- `render.py --check` fails when `media/options.png` is missing, but the kit forbids running `options.py` here and no earlier file existed, so the check reports this one FAIL until the coordinator renders it; no placeholder was committed.
+- `.kit/stem_check.py` `Check.claim` returns "Fails" for any value over its limit and `render.py` then forces `stem_check: fail`; a fix that makes the same claim pass has to replace the failing row in the script, so the first-drawn failures are recorded in prose (the STEM check's fixes table) rather than as rows.
+- The tideflap STEM check shows a `<!-- STM_TABLE -->` block "generated from stem_results.csv", but the kit has no script that writes it; the table here was generated by a throwaway script.
+
+### Recommended next step
+
+Amish decides O1 to O4. The coordinator then renders the product views (`hero`, `studio`, `head`) and `media/options.png` on the Mac. TRL 4 stays on hold.
+
+
 ## Session 2026-10-02: open decisions decided by Amish
 
 Amish wrote on 2026-10-02: "i approve your recommendations for all 555 open decisions." Every open decision in this repo's register was decided as recommended and moved to "Decisions made" in `docs/06-design-decisions.md`, dated 2026-10-02.

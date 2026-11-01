@@ -3,28 +3,32 @@ doc_id: CBC-DEC-001
 title: CurbCount design decisions register
 project: CurbCount
 doc_type: Design decisions register
-version: "0.4"
+version: '0.5'
 status: Draft
-date: '2026-10-02'
+date: '2026-10-31'
 author: Amish Chadha
 license: CERN-OHL-S-2.0
 revisions:
-- version: "0.1"
+- version: '0.1'
   date: '2026-09-30'
   author: Amish Chadha
   change: Register opened with the build plan; open decisions gathered from the review note and the decision records
-- version: "0.2"
+- version: '0.2'
   date: '2026-10-01'
   author: Amish Chadha
   change: Budget treated as a value-engineering target
-- version: "0.3"
+- version: '0.3'
   date: '2026-10-02'
   author: Amish Chadha
-  change: "Amish approved the recommendations for all nine open decisions on 2026-10-02 (CBC-DDR-003 accepted); moved to decisions made"
-- version: "0.4"
+  change: Amish approved the recommendations for all nine open decisions on 2026-10-02 (CBC-DDR-003 accepted); moved to decisions made
+- version: '0.4'
   date: '2026-10-02'
   author: Amish Chadha
   change: Decisions 5 to 9 carried into model.py, the appearance model and the BOM
+- version: '0.5'
+  date: '2026-10-31'
+  author: Amish Chadha
+  change: 'Kit 1.9.1 upgrade: open decisions O1 (cold charging) and O2 (concept choice) added; C1 (radar duty cycle) and C2 (model rebuilt, no dimension changed) recorded as decided under the standing instruction'
 ---
 
 # CurbCount design decisions register
@@ -33,7 +37,14 @@ Every design decision still to be made, and every decision made, in one place. E
 
 ## Open decisions
 
-None. All open decisions were decided on 2026-10-02.
+*Table 1. Open decisions.*
+
+| # | Decision needed | Options | Recommendation | Affects in the build | Source |
+| --- | --- | --- | --- | --- | --- |
+| O1 | Cold charging: LiFePO4 may not be charged below 0 degrees C, so charging stops below about 0 degrees C air (STM S8) | (1) limit the claim to cool sites; (2) heated cell pocket in the FieldNode core; (3) low-temperature cell | Option 1 now (done in PR-010), and raise 2 and 3 with the FieldNode project | BOM line 3 and the FieldNode enclosure if 2 or 3; PR-010; CAL-001 E | CBC-DDR-004, O1; CBC-STM-001 S8 |
+| O2 | Concept choice between the thermal array head (A) and the 60 GHz radar head (B); scores 121 and 110, within 10 % so no pick is made | (1) A as the build, B as the hot-climate variant; (2) B for all sites; (3) a combined head | Option 1 (already decided on 2026-09-25; nothing changes) | Nothing if 1; the whole head, panel and cells if 2 | CBC-DDR-004, O2; CBC-OPT-001 |
+| O3 | Vehicle counting: a car's warm hood is in the field for 3.2 frames, not 4 (STM S5) | (1) 32 Hz subpages with 1 MHz I2C: 6.4 frames, noise up by the square root of 2, a faster pull-up; (2) accept that vehicle counts are not met and say so; (3) a vehicle sensor on option B only | Option 1: it is firmware and bus speed, but it sets the shared FieldNode sensor port speed, so FieldNode must agree | CAL-001 C, F; PR-001, PR-003; FieldNode sensor port | CBC-DDR-004, O3; CBC-STM-001 S5 |
+| O4 | If option B is carried forward: FieldNode's high-load charger for the 20 W panel (5.0 A against the 1.5 A setting, STM S28) and a shield or shaded cell for hot sites (STM S26) | (1) FieldNode high-load variant plus shield; (2) leave B as a thermal-only-hot-site study | Option 1, argued in the FieldNode project | Option B's BOM, enclosure and panel; nothing in option A | CBC-DDR-004, O4; CBC-STM-001 S26, S28 |
 
 ## To confirm when parts are bought
 
@@ -77,3 +88,5 @@ Savings worth trying: leaving port B out of CurbCount's core (about USD 6 less, 
 | 2026-10-02 | Status light on the sensor head dropped | Amish: "i approve your recommendations for all 555 open decisions." | REVIEW 2026-09-26, item 4 |
 | 2026-10-02 | "COUNTS ONLY" plaque embossed into the printed head housing (BOM line 8); the enclosure label is part of BOM line 1 | Amish: "i approve your recommendations for all 555 open decisions." | REVIEW 2026-09-26, item 5 |
 | 2026-10-02 | Head window bezel and head bolts of the appearance model closed as superseded by the window frame and M5 bolts of CBC-DDR-003, P4; the appearance model was updated to match on 2026-10-02 | Amish: "i approve your recommendations for all 555 open decisions." | REVIEW 2026-09-26, item 6; CBC-DDR-003, P4 |
+| 2026-10-31 | C1: option B's radar runs in frame bursts for about 0.2 W average, one burst in six (was 1.2 W continuous, which drew 32 Wh/day against 14.5 Wh/day stored; 0.25 W still gave only 2.6 days with cold and end of life together); two cells and a 20 W panel unchanged | Claude, under Amish's standing instruction of 2026-10-23 (fix rule); Amish can reverse it | CBC-DDR-004, C1; STM S22, S23 |
+| 2026-10-31 | C2: model.py rebuilt to the kit 1.9 interface at D3 for both options with every fixing as a part; `PARAMS` and `derived()` identical to the kit 1.7 model, so no design dimension changed | Claude, under the same instruction (modelling only) | CBC-DDR-004, C2; cad/fidelity.json |

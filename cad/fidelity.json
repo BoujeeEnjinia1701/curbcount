@@ -1,0 +1,35 @@
+{
+ "level": "D3",
+ "stage": "P3",
+ "hash": "d95f09fe9b798dcf",
+ "options": {
+  "A": {
+   "title": "Thermal array head (LWIR, 32 x 24 px)",
+   "parts": 127,
+   "made_or_bought": 46,
+   "fasteners": 81,
+   "welds": 0,
+   "bare": [],
+   "bare_share": 0.0,
+   "interference": [],
+   "mass_kg": 4.8,
+   "step_files": 46
+  },
+  "B": {
+   "title": "60 GHz radar head",
+   "parts": 128,
+   "made_or_bought": 47,
+   "fasteners": 81,
+   "welds": 0,
+   "bare": [],
+   "bare_share": 0.0,
+   "interference": [],
+   "mass_kg": 5.2,
+   "step_files": 0
+  }
+ },
+ "failures": [],
+ "warnings": [],
+ "passed": true,
+ "seconds": 47.0
+}

@@ -5,25 +5,50 @@ repo: BoujeeEnjinia1701/curbcount         # GitHub repository, shown on every dr
 area: Smart Cities
 trl: 3                   # Technology Readiness Level, see .kit/STANDARDS.md section 9
 trl_target: 3
+stage: P3                # pipeline stage, STANDARDS section 19; recorded in the kit 1.9.1 upgrade of 2026-10-31
+stem_check: open         # CBC-STM-001 v0.1: S5, S8, S26, S28 fail with a fix proposed to Amish (CBC-DEC-001 O1, O3, O4); 14 plausible rows need TRL 4
+concept_options: [A, B]  # CBC-OPT-001: A thermal array head, B 60 GHz radar head
+# concept_chosen is left unset: A scores 121 and B 110 of 165, within 10 %, so both go to Amish (CBC-DEC-001 O2)
 design_state: constructable   # concept or constructable, see .kit/STANDARDS.md section 18
 trl_evidence:
   - docs/01-problem.md
+  - docs/01b-stem-check.md
   - docs/02-concept.md
+  - docs/02a-concept-options.md
+  - docs/03a-user-requirements.md
   - docs/03-requirements.md
+  - docs/03b-traceability.md
   - docs/decisions/0001-trl2-review-decisions.md
   - docs/decisions/0002-recommendations-accepted.md
   - docs/decisions/0003-design-for-construction.md
+  - docs/decisions/0004-concept-options.md
   - docs/04-calcs/01-sizing.md
   - docs/04-calcs/sizing.py
+  - docs/04-calcs/stem_check.py
   - cad/src/model.py
-  - cad/step/curbcount-assembly.step
+  - cad/fidelity.json
+  - cad/src/cc_parts.py
+  - cad/src/product_model.py
+  - cad/src/concept_media.py
+  - cad/step/A-assembly.step
+  - cad/step/B-assembly.step
+  - cad/stl/curbcount-assembly.stl
+  - cad/stl/curbcount-option-B.stl
   - cad/drawings/CBC-DWG-001.svg
   - cad/drawings/CBC-DWG-001.pdf
   - bom/bom.csv
   - docs/05-build-plan.md
   - docs/06-design-decisions.md
+  - docs/07-regulatory.md
+  - docs/08-feasibility.md
+  - docs/09-risk.md
+  - docs/10-market.md
+  - docs/11-plan.md
   - docs/05-build-plan/overview.png
   - cad/src/build_plan_media.py
+  - media/hero.png
+  - media/concept-blueprint.png
+  - media/model.glb
 shortlisted: false
 pitch: >-
   A privacy-safe counter for people, bicycles and vehicles at street level that uses on-device detection and sends only counts, never images.

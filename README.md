@@ -62,14 +62,24 @@ A thermal array on a short arm looks down over the sidewalk, bike lane and neare
 
 Full design precis: [docs/02-concept.md](docs/02-concept.md)
 
+## STEM check
+
+Thirty-one claims are checked ([CBC-STM-001](docs/01b-stem-check.md)): 13 are within known science, 14 are plausible and need a measurement at TRL 4, and 4 fail with a fix proposed to Amish, so the check stays open. The failures all touch the shared FieldNode core: a car's warm hood is in the thermal array's field for 3.2 frames, not the 4 the tracker needs (S5); a LiFePO4 cell may not be charged below 0 degrees C, so the node is energy neutral only where the winter air stays above about 0 degrees C (S8); and, for the radar option, a shared cell above its charge limit on hot days (S26) and a charger set for 1.5 A under a 20 W panel (S28). The radar option's first energy budget also failed (the radar drew 32 Wh/day against 14.5 Wh/day stored) and was fixed under Amish's standing instruction by running it in frame bursts (CBC-DEC-001 C1). An independent reviewer refuted three rows (S5, S20, S23) and weakened several more; all were corrected or restated.
+
+## Concept options
+
+![Two ways to count people at the curb, side by side at one scale](media/options.png)
+
+Option A, the thermal array head (the current design, unchanged), scores 121 of 165; option B, a 60 GHz radar head, scores 110. They are within 10 %, so both go to Amish without a pick (CBC-OPT-001, CBC-DDR-004). Both are modelled at the same level of detail (A 127 parts, 4.8 kg; B 128 parts, 5.2 kg, from `cad/fidelity.json`).
+
 ## Key components
 
-- Low-resolution thermal array (32 x 24 px, 110 x 75° lens, wide axis across the street) behind an HDPE window; mmWave radar as the hot-climate variant
+- Low-resolution thermal array (32 x 24 px, 110 x 75° lens, wide axis across the street) behind an HDPE window; mmWave radar as the hot-climate variant (option B, modelled)
 - FieldNode power and radio core, standard: one LiFePO4 cell, 6 W panel, STM32WL running the tracker (an ESP32-S3 head is kept on paper as a fallback)
 - Aluminum sensor arm, pole-top panel mount and stainless band clamps
 - Public notice plate on the pole
 
-The priced bill of materials is in [bom/bom.csv](bom/bom.csv); the parametric model is [cad/src/model.py](cad/src/model.py).
+The priced bill of materials is in [bom/bom.csv](bom/bom.csv); the parametric model of both options, with every bolt, nut and screw as its own part, is [cad/src/model.py](cad/src/model.py).
 
 ## Building the prototype
 
@@ -85,21 +95,21 @@ The [prototype build plan](docs/05-build-plan.md) shows how to build the first C
 
 ## Repository layout
 
-| Folder | Contents |
-| --- | --- |
-| `docs/` | Problem, concept, requirements, calculations and design decisions |
-| `cad/src/` | build123d Python source, the source of truth for all geometry |
-| `cad/step/`, `cad/stl/` | Exported models for FreeCAD, other CAD tools and printing |
-| `cad/drawings/` | 2D sketches and dimensioned drawings |
-| `bom/` | Bill of materials |
-| `electronics/` | KiCad schematics and PCB layouts |
-| `firmware/` | Microcontroller code |
-| `media/` | Renders, perspectives and photos |
-| `build-log/` | Dated prototyping notes |
+```
+docs/                 controlled documents (PRB, STM, OPT, PRC, URS, PRS, RTM, CAL, BLD, DEC, REG, FEA, RSK, MKT, PLN, DDR) and REVIEW.md
+docs/04-calcs/        sizing.py (CBC-CAL-001) and stem_check.py (CBC-STM-001)
+cad/src/model.py      parametric model of options A and B (kit 1.9, detail level D3)
+cad/src/              cc_parts.py, sheets.py, build_plan_media.py, concept_media.py, product_model.py
+cad/step/, cad/stl/   STEP per part and per assembly for every option; STL of each option
+cad/drawings/         CBC-DWG-001 general arrangement and CBC-DWG-101 to 116 making sketches
+bom/bom.csv           priced bill of materials
+media/                concept media and renders
+.kit/                 shared documentation kit 1.9.1 (do not edit here)
+```
 
 ## Documentation
 
-Controlled documents follow the portfolio [documentation standard](.kit/STANDARDS.md). Each carries a document ID (CBC-PRC-001 for the precis), a version and a revision history. Branded PDFs are built with `python .kit/render.py` and attached to GitHub Releases when a document is tagged, for example `CBC-PRC-001/v1.0`.
+Controlled documents follow the portfolio [documentation standard](.kit/STANDARDS.md). Each carries a document ID (CBC-PRC-001 for the precis), a version and a revision history. Run `python .kit/render.py --check` to validate them, `python .kit/cad_check.py --export` for the CAD fidelity check and `python docs/04-calcs/sizing.py` for the calculations. Branded PDFs are built with `python .kit/render.py` and attached to GitHub Releases when a document is tagged, for example `CBC-PRC-001/v1.0`.
 
 ## Credits
 

@@ -1,7 +1,7 @@
 """CurbCount concept media (TRL 3), generated from the parametric model.
 
 Run from the repo root:  python cad/src/concept_media.py
-Takes the counter's parts from cad/src/model.py (PARAMS) and renders the media set with
+Takes the counter's parts from cad/src/model.py (components(CHOSEN), PARAMS) and renders the media set with
 .kit/concept.py. Every colored part carries the BOM line number used in bom/bom.csv; grey parts
 (street pole, sidewalk and road, sensing footprint, person) are context with no BOM number.
 Figures on the sheet and in the flow diagram come from docs/04-calcs/sizing.py (CBC-CAL-001).
@@ -19,7 +19,7 @@ sys.path[:0] = [str(ROOT / ".kit"), str(ROOT / "cad" / "src")]
 from build123d import Pos  # noqa: E402
 import concept  # noqa: E402
 from concept import Part, render_all, human_figure  # noqa: E402
-from model import PARAMS as P, BOM, build_parts, context_parts, derived  # noqa: E402
+from model import PARAMS as P, BOM, components, CHOSEN, context_parts, derived  # noqa: E402
 
 import matplotlib  # noqa: E402
 matplotlib.use("Agg")
@@ -27,7 +27,20 @@ import matplotlib.pyplot as plt  # noqa: E402
 from matplotlib.patches import FancyBboxPatch, FancyArrowPatch  # noqa: E402
 
 D = derived(P)
-m = build_parts(P)
+
+
+def grouped():
+    """The chosen design's detailed parts (kit 1.9, model.components) merged per BOM group for the concept pictures; fasteners are left out."""
+    from build123d import Compound
+    groups = {}
+    for q in components(CHOSEN):
+        if q["kind"] in ("context", "fastener", "weld") or q["group"] not in BOM:
+            continue
+        groups.setdefault(q["group"], []).append(q["shape"])
+    return {k: Compound(children=v) for k, v in groups.items()}
+
+
+m = grouped()
 c = context_parts(P)
 
 # Exploded offsets in screen terms for the kit's default isometric camera (elevation 24 deg, azimuth -58 deg):
@@ -134,14 +147,14 @@ if __name__ == "__main__":
     os.chdir(ROOT)
     concept.ROOT = ROOT
     render_all(
-        parts, project="CurbCount", title="Privacy-safe street counter concept", dwg_no="CBC-DWG-010", rev="P4",
+        parts, project="CurbCount", title="Privacy-safe street counter concept", dwg_no="CBC-DWG-010", rev="P6",
         key_figures=["Thermal array 32 x 24 px, 110 deg across the street",
                      f"Footprint {D['fp_x_min'] / 1000:.1f} to {D['fp_x_max'] / 1000:.1f} m across, 6 to 7 m along",
                      "Counts people, bikes, vehicles; 15 min bins",
                      "No images leave the device; 7.6 px/m at head height",
                      "0.10 W from the cell; 6.2 days without sun",
                      "Parts $274 vs $275 budget (indicative)"],
-        date="2026-09-30",
+        date="2026-10-31",
         scale_figure=False, context=context,
         cut_exclude=["Solar panel, 6 W", "Panel pole-top mount", "Band clamps (4), enclosure saddle",
                      "Sensor cable, M12", "Public notice plate"],

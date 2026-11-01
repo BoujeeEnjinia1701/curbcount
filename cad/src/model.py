@@ -37,6 +37,9 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
+HERE = Path(__file__).resolve().parent
+sys.path[:0] = [str(HERE), str(HERE.parents[1] / ".kit")]
+
 # Top-level parameters (mm, degrees). Edit these, not the geometry below.
 PARAMS = {
     # street design case (CBC-REQ-001): 3 m sidewalk, 2 m bike lane, one 3.5 m traffic lane
@@ -411,7 +414,7 @@ def _core_local(p=PARAMS):
     for sx in (-1, 1):
         for sz in (-1, 1):
             body += ycyl(sx * bxo, yb - w - bh / 2, zc + sz * bzo, 4.0, bh)
-            body -= ycyl(sx * bxo, yb - w - bh + 4, zc + sz * bzo, 1.6, 8.1)
+            body -= ycyl(sx * bxo, yb - w - bh + 4, zc + sz * bzo, 2.0, 8.1)
     for k, (x, row, dt, df) in p["pens"].items():
         hole = dt / 2 + (0.1 if dt >= 10 else 0.05)
         body -= zcyl(x, pen_xy[k][1], z0 + w / 2, hole, w + 2)
@@ -428,10 +431,9 @@ def _core_local(p=PARAMS):
             lug -= ycyl(sx * lx, yb - lt / 2, zh, 2.75, lt + 2)
             lugs.append(lug)
             hl, nl = 2.75, 4.5
-            lug_fix.append(ycyl(sx * lx, yb + st + hl / 2, zh, 4.75, hl) + ycyl(sx * lx, yb + st / 2 - lt / 2, zh, 2.75, st + lt)
-                           + hexprism("y", sx * lx, yb - lt - nl / 2, zh, 8.0, nl) + ycyl(sx * lx, yb - lt - nl - 1, zh, 2.5, 2))
+            lug_fix.append((sx * lx, zh))
     out["lugs"] = ("Enclosure lugs (4)", fuse(lugs), 1, "bought", "enclosure")
-    out["lug_screws"] = ("M5 screws and nuts, lugs (4)", fuse(lug_fix), 13, "fixing", None)
+    out["_lug_fix"] = lug_fix
 
     def pen(k):
         x, y = pen_xy[k]
@@ -466,11 +468,14 @@ def _core_local(p=PARAMS):
     finger = b.Pos(0, yp1 - mt / 2, zc + mh / 2 - 12) * b.Box(40, mt + 2, 10)
     mp -= b.fillet(finger.edges().filter_by(b.Axis.Y), 4.9)
     out["mplate"] = ("Internal plate", mp, 1, "made", "enclosure")
-    out["mplate_screws"] = ("M4 screws, internal plate (4)",
-                            fuse(ycyl(sx * bxo, mf - 1.4, zc + sz * bzo, 3.5, 2.8) for sx in (-1, 1) for sz in (-1, 1)), 13, "fixing", None)
+    out["_mp_fix"] = (mf, [(sx * bxo, zc + sz * bzo) for sx in (-1, 1) for sz in (-1, 1)])
     cd, cl = p["cell"]
     out["cell"] = ("LiFePO4 cell in fused holder", zcyl(-38, mf - cd / 2 - 4, z0 + 75, cd / 2, cl) + box(-38, mf - 5, z0 + 75, cd + 6, 10, cl + 10),
                    3, "bought", "cells")
+    if p.get("n_cells", 1) > 1:
+        y2 = mf - cd - 4 - 2 - cd / 2
+        out["cell2"] = ("Second LiFePO4 cell, stacked in front of the first", zcyl(-38, y2, z0 + 75, cd / 2, cl) + box(-38, mf - cd - 5, z0 + 75, 18, 2, 50),
+                        3, "bought", "cells")
     pw_, ph_, pt_ = p["board"]
     out["power"] = ("Power modules", box(22, mf - pt_ / 2, z0 + 70, pw_, pt_, ph_)
                     + box(30, mf - pt_ - 6, z0 + 62, 22, 12, 18) + box(5, mf - pt_ - 4, z0 + 82, 14, 8, 10), 2, "bought", "board")
@@ -501,20 +506,94 @@ def port_world(key, p=PARAMS):
 
 
 # ------------------------------------------------------------------ components
+def _bolt_nut(d, grip):
+    """[(name, shape)] for a hex bolt (head on the joint's top face, z = 0) and its nut on the far face, grip mm below."""
+    import cad_parts as cp
+    m, pitch = cp.ISO[d][2], cp.ISO[d][5]
+    L = math.ceil((grip + m + 2.5 * pitch) / 5) * 5
+    b = _b3d()
+    return [(f"M{d}x{L} hex bolt (ISO 4017)", cp.hex_bolt(d, L)), (f"M{d} hex nut (ISO 4032)", b.Pos(0, 0, -grip - m) * cp.hex_nut(d))]
+
+
+def _cone_cut(origin, zdir, d_head, depth):
+    """Countersink cutter: 90 degree cone, wide face (diameter d_head, slightly oversize) at origin, narrowing along zdir."""
+    b = _b3d()
+    return b.Solid.make_cone(d_head / 2 + 0.1, d_head / 2 - depth + 0.1, depth, b.Plane(origin=origin, z_dir=zdir))
+
+
+def _csk_cut(x, y, z_top, d):
+    """Countersink cutter for a 90 degree head of nominal diameter d, top face at z_top (slightly oversize)."""
+    b = _b3d()
+    return b.Pos(x, y, 0) * b.Solid.make_cone(d / 2 + 0.1, d + 0.1, d / 2, b.Plane.XY.offset(z_top - d / 2)).moved(b.Location((0, 0, 0)))
+
+
+def _panel_solid(p, rt):
+    """PV module in the rail frame (s along the slope, y across, m along the normal, m = rt on the rail plate): aluminium
+    frame (2 mm wall, 12 mm back lip, 5 mm front lip), laminate between the lips, holes in the back lip for the lip bolts."""
+    pw, pl, pth = p["panel"]
+    w, lip_b, lip_f, tl, lam = 2.0, 12.0, 5.0, 2.0, 3.0
+    def ring(wo, ho, wi, hi, m0, m1):
+        return bx(-wo / 2, wo / 2, -ho / 2, ho / 2, m0, m1) - bx(-wi / 2, wi / 2, -hi / 2, hi / 2, m0 - 1, m1 + 1)
+    fr = (ring(pw, pl, pw - 2 * w, pl - 2 * w, rt, rt + pth)
+          + ring(pw, pl, pw - 2 * lip_b, pl - 2 * lip_b, rt, rt + tl)
+          + ring(pw, pl, pw - 2 * lip_f, pl - 2 * lip_f, rt + pth - tl, rt + pth))
+    lamin = bx(-pw / 2 + w, pw / 2 - w, -pl / 2 + w, pl / 2 - w, rt + pth - tl - lam, rt + pth - tl)
+    out = fr + lamin
+    for sl in (-1, 1):
+        for yy in (-50.0, 50.0):
+            out -= zcyl(sl * (pw / 2 - lip_b / 2), yy, rt + tl / 2, 2.25, tl + 2)
+    return out
+
+
 def build_components(p=PARAMS):
-    """Every component as a Comp, keyed by a short name."""
+    """Every component as a Comp, keyed by a short name (fixings fused per key, for the drawings and pictures)."""
+    C, FIT = build_items(p)
+    by_key = {}
+    for f in FIT:
+        by_key.setdefault(f["key"], []).append(f)
+    for k, lst in by_key.items():
+        C[k] = Comp(lst[0]["label"], fuse([f["shape"] for f in lst]), 13, "fixing", None)
+    return C
+
+
+def build_items(p=PARAMS):
+    """Made and bought components {key: Comp} and the individual fixings [dict(key, name, shape, material, kind, bom)]."""
+    import cad_parts as cp
+    from cc_parts import pan_screw, csk_screw, set_screw, spacer, put
     b = _b3d()
     D = derived(p)
     pr = D["pole_r"]
     px = p["pole_x"]
     C = {}
+    FIT = []
 
     def add(key, name, shape, bom, kind, group):
         C[key] = Comp(name, shape, bom, kind, group)
 
+    def fit(key, label, name, shape, material="stainless", kind="fastener", bom=None):
+        FIT.append(dict(key=key, label=label, name=name, shape=shape, material=material, kind=kind, bom=bom))
+
+    def bolt_set(key, label, d, grip, origin, zdir):
+        """ISO 4017 bolt and ISO 4032 nut clamping a joint 'grip' mm thick; joint top face at origin, head side along zdir."""
+        for nm, sh in _bolt_nut(d, grip):
+            fit(key, label, nm, put(sh, origin, zdir))
+
     # ---- 1 to 3, 14: the FieldNode core, in world position
-    for k, (name, shape, bom, kind, group) in _core_local(p).items():
+    core = _core_local(p)
+    lug_fix = core.pop("_lug_fix")
+    mp_fix = core.pop("_mp_fix")
+    for k, (name, shape, bom, kind, group) in core.items():
         add(k, name, core_to_world(shape, p), bom, kind, group)
+    # lug screws M5: head on the saddle plate's pole side, nut in front of the lug (core local frame, +y toward the pole)
+    st_e = p["enc_plate"][0]
+    lt_ = p["lug"][2]
+    for lx_, lz_ in lug_fix:
+        for nm, sh in _bolt_nut(5, st_e + lt_):
+            fit("lug_screws", "M5 bolts, lugs (4)", nm, core_to_world(put(sh, (lx_, st_e, lz_), (0, 1, 0)), p))
+    mf_, mpos = mp_fix
+    for mx_, mz_ in mpos:
+        fit("mplate_screws", "M4 screws, internal plate (4)", "M4 pan head screw, internal plate",
+            core_to_world(put(pan_screw(4, 10), (mx_, mf_, mz_), (0, -1, 0)), p))
 
     # ---- 6 enclosure saddle plate, V-saddles, bands
     st, sw, sh = p["enc_plate"]
@@ -532,6 +611,8 @@ def build_components(p=PARAMS):
     ww, wh, wr = p["enc_window"]
     win = b.Pos(-st / 2, 0, 0) * b.Rot(0, 90, 0) * b.extrude(b.RectangleRounded(wh, ww, wr), st / 2 + 1, both=True)
     plate -= win
+    for v, z in vs_screw:
+        plate -= _cone_cut((-st, v, z), (1, 0, 0), 8.0, 2.0)
     zc = p["enc_zc"]
     add("enc_plate", "Enclosure saddle plate", _to_world(plate, 1, D["enc_plate_back"], zc), 6, "made", "clamps")
     sad = _vsaddle_local(p)
@@ -540,8 +621,9 @@ def build_components(p=PARAMS):
         for s in (-1, 1):
             s_ -= xcyl(1.5, 0, dz + s * 10, 2.0, 3.2)
         add(f"enc_vs_{nm}", f"V-saddle, enclosure {'upper' if nm == 'up' else 'lower'}", _to_world(s_, 1, D["enc_plate_back"], zc), 6, "made", "clamps")
-    scr = fuse(xcyl(-st + (st + 3) / 2, v, z, 2.0, st + 3) for v, z in vs_screw)
-    add("enc_vs_screws", "M4 countersunk screws, V-saddles (4)", _to_world(scr, 1, D["enc_plate_back"], zc), 13, "fixing", None)
+    for v, z in vs_screw:
+        fit("enc_vs_screws", "M4 screws, V-saddles (4)", "M4x8 countersunk screw, V-saddle",
+            put(csk_screw(4, 8), (D["enc_plate_front"], v, zc + z), (-1, 0, 0)))
     bw, bt = p["band_w"], p["band_t"]
     bands = fuse(b.Pos(0, 0, dz) * _band_local(off, pr, sy, st, bw, bt) for dz in (p["enc_band_dz"], -p["enc_band_dz"]))
     add("enc_bands", "Band clamps, enclosure (2)", _to_world(bands, 1, D["enc_plate_back"], zc), 6, "bought", "clamps")
@@ -555,19 +637,22 @@ def build_components(p=PARAMS):
     aholes = [(v, z, 3.3) for v, z in bb_bolts] + [(v, z, 2.25) for v, z in vs2]
     aslots = [(v, z, sv, sz_) for v in (-sy, sy) for z in (p["arm_band_dz"], -p["arm_band_dz"])]
     aplate = _plate_local(ast, asw, ash, aholes, aslots)
+    for v, z in vs2:
+        aplate -= _cone_cut((-ast, v, z), (1, 0, 0), 8.0, 2.0)
     add("arm_plate", "Arm saddle plate", _to_world(aplate, -1, D["arm_plate_back"], az), 7, "made", "arm")
     for nm, dz in (("up", p["arm_vs_dz"]), ("low", -p["arm_vs_dz"])):
         s_ = b.Pos(0, 0, dz) * sad
         for s in (-1, 1):
             s_ -= xcyl(1.5, 0, dz + s * 10, 2.0, 3.2)
         add(f"arm_vs_{nm}", f"V-saddle, arm {'upper' if nm == 'up' else 'lower'}", _to_world(s_, -1, D["arm_plate_back"], az), 7, "made", "arm")
-    scr = fuse(xcyl(-ast + (ast + 3) / 2, v, z, 2.0, ast + 3) for v, z in vs2)
-    add("arm_vs_screws", "M4 countersunk screws, V-saddles (4)", _to_world(scr, -1, D["arm_plate_back"], az), 13, "fixing", None)
+    for v, z in vs2:
+        fit("arm_vs_screws", "M4 screws, V-saddles (4)", "M4x8 countersunk screw, V-saddle",
+            put(csk_screw(4, 8), (D["arm_plate_front"], v, az + z), (1, 0, 0)))
     bands = fuse(b.Pos(0, 0, dz) * _band_local(off, pr, sy, ast, bw, bt) for dz in (p["arm_band_dz"], -p["arm_band_dz"]))
     add("arm_bands", "Band clamps, arm (2)", _to_world(bands, -1, D["arm_plate_back"], az), 6, "bought", "clamps")
     a, wt = p["arm"]
     x0, x1 = D["arm_x0"], D["arm_x1"]
-    tube = bx(x0, x1, -a / 2, a / 2, az - a / 2, az + a / 2) - bx(x0 - 1, x1 + 1, -a / 2 + wt, a / 2 - wt, az - a / 2 + wt, az + a / 2 - wt)
+    tube = b.Pos(x0, 0, az) * b.Rot(0, 90, 0) * cp.shs(a, wt, x1 - x0)
     tb_x = [x0 + 15.0, x0 + 30.0]
     hb_x = list(p["head_bolts_x"])
     for xx in tb_x:
@@ -575,33 +660,30 @@ def build_components(p=PARAMS):
     for xx in hb_x:
         tube -= zcyl(xx, 0, az, 2.75, a + 2)
     add("arm_tube", "Arm tube", tube, 7, "made", "arm")
-    add("arm_cap", "Arm end cap", bx(x1, x1 + 3, -a / 2, a / 2, az - a / 2, az + a / 2) + bx(x1 - 8, x1, -a / 2 + wt, a / 2 - wt, az - a / 2 + wt, az + a / 2 - wt),
-        7, "bought", "arm")
+    cap_plug = b.fillet(bx(x1 - 8, x1, -a / 2 + wt + 0.05, a / 2 - wt - 0.05, az - a / 2 + wt + 0.05, az + a / 2 - wt - 0.05).edges().filter_by(b.Axis.X), 1.9)
+    add("arm_cap", "Arm end cap", cp.break_edges(bx(x1, x1 + 3, -a / 2, a / 2, az - a / 2, az + a / 2), 1.0) + cap_plug, 7, "bought", "arm")
     brk = []
-    for s in (1, -1):
-        zf = az + s * a / 2                        # tube face the leg sits on
-        leg_v = bx(x0, x0 + at_, -aw / 2, aw / 2, zf, zf + s * al) if s > 0 else bx(x0, x0 + at_, -aw / 2, aw / 2, zf - al, zf)
-        leg_h = bx(x0, x0 + al, -aw / 2, aw / 2, zf, zf + s * at_) if s > 0 else bx(x0, x0 + al, -aw / 2, aw / 2, zf - at_, zf)
-        br = leg_v + leg_h
+    up_ref = None
+    for s_ in (1, -1):
+        zf = az + a / 2
+        br = b.Pos(x0, aw / 2, zf) * b.Rot(90, 0, 0) * cp.angle(al, al, at_, aw)
+        if s_ < 0:
+            br = br.mirror(b.Plane.XY.offset(az))
         for v, z in bb_bolts:
-            if z * s > 0:
+            if z * s_ > 0:
                 br -= xcyl(x0 + at_ / 2, v, az + z, 3.3, at_ + 2)
         for xx in tb_x:
-            br -= zcyl(xx, 0, zf + s * at_ / 2, 3.3, at_ + 2)
+            br -= zcyl(xx, 0, az + s_ * (a / 2 + at_ / 2), 3.3, at_ + 2)
         brk.append(br)
     add("arm_brk_up", "Arm bracket, upper", brk[0], 7, "made", "arm")
     add("arm_brk_low", "Arm bracket, lower", brk[1], 7, "made", "arm")
-    # the nut goes behind the plate (pole side): build head at the bracket, nut behind
-    fx = [hexprism("x", x0 + at_ + 1.8, v, az + z, 10.0, 3.6) + xcyl((D["arm_plate_back"] + x0 + at_) / 2, v, az + z, 3.0, x0 + at_ - D["arm_plate_back"])
-          + hexprism("x", D["arm_plate_back"] - 2.7, v, az + z, 10.0, 5.4) + xcyl(D["arm_plate_back"] - 6.4, v, az + z, 3.0, 2)
-          for v, z in bb_bolts]
-    spacers = []
+    for v, z in bb_bolts:
+        bolt_set("arm_bolts", "M6 bolts, arm brackets (6)", 6, at_ + ast, (x0 + at_, v, az + z), (1, 0, 0))
     for xx in tb_x:
-        fx.append(_bolt_z(az - a / 2 - at_, az + a / 2 + at_, xx, 0, 6.0, 10.0))
-        spacers.append(zcyl(xx, 0, az, 5.0, a - 2 * wt) - zcyl(xx, 0, az, 3.0, a))
-    add("arm_bolts", "M6 bolts, arm brackets (6)", fuse(fx), 13, "fixing", None)
-    add("arm_spacers", "Crush spacers in the arm (4)", fuse(spacers + [zcyl(xx, 0, az, 5.0, a - 2 * wt) - zcyl(xx, 0, az, 2.75, a) for xx in hb_x]),
-        13, "fixing", None)
+        bolt_set("arm_bolts", "M6 bolts, arm brackets (6)", 6, a + 2 * at_, (xx, 0, az + a / 2 + at_), (0, 0, 1))
+        fit("arm_spacers", "Crush spacers in the arm (4)", "Crush spacer, M6", put(spacer(10, 6.4, a - 2 * wt), (xx, 0, az - a / 2 + wt), (0, 0, 1)))
+    for xx in hb_x:
+        fit("arm_spacers", "Crush spacers in the arm (4)", "Crush spacer, M5", put(spacer(9, 5.4, a - 2 * wt), (xx, 0, az - a / 2 + wt), (0, 0, 1)))
 
     # ---- 8 to 10 sensor head (head frame, then tilted into place)
     hx, hy, hz = p["head"]
@@ -635,9 +717,10 @@ def build_components(p=PARAMS):
     slab = bx(wx0, wx1, -a / 2, a / 2, D["arm_bot"] - 30, D["arm_bot"])
     below = H * box(0, 0, hz / 2 + p["hood"][2] - 500, 2000, 2000, 1000)
     wedge = slab - below
+    hw_ = housing + wedge
     for xx in hb_x:
-        wedge -= zcyl(xx, 0, D["arm_bot"] - 5, 2.5, 10.01)
-    add("housing", "Head housing with hood and wedge pad", housing + wedge, 8, "made", "housing")
+        hw_ -= zcyl(xx, 0, D["arm_bot"] - 5, 2.5, 10.01)
+    add("housing", "Head housing with hood and wedge pad", hw_, 8, "made", "housing")
     fw = p["frame_t"]
     film_t = p["window"][2]
     fr = box(0, 0, -hz / 2 - film_t - fw / 2, hx, hy, fw) - box(0, 0, -hz / 2 - film_t - fw / 2, iw - 2 * lg, ih - 2 * lg, fw + 2)
@@ -651,13 +734,19 @@ def build_components(p=PARAMS):
         for s2 in (-1, 1):
             film -= zcyl(s1 * sx_, s2 * sy_, -hz / 2 - film_t / 2, 1.75, 2)
     add("film", "Window film", H * film, 9, "bought", "window")
-    add("frame_screws", "M3 screws, window frame (4)",
-        H * fuse(zcyl(s1 * sx_, s2 * sy_, -hz / 2 - film_t - fw + 6, 1.5, 12) + zcyl(s1 * sx_, s2 * sy_, -hz / 2 - film_t - fw - 1, 2.75, 2)
-                 for s1 in (-1, 1) for s2 in (-1, 1)), 13, "fixing", None)
-    add("array", "Thermal array on its breakout", H * (zcyl(0, 0, -hz / 2 + 14, 4.7, 12) + box(0, 0, -hz / 2 + 21, 32, 26, 2)), 10, "bought", "array")
-    add("head_bolts", "M5 bolts, head to arm (2)",
-        fuse(hexprism("z", xx, 0, az + a / 2 + 1.75, 8.0, 3.5) + zcyl(xx, 0, (az + a / 2 + D["arm_bot"] - 10) / 2, 2.5, az + a / 2 - D["arm_bot"] + 10)
-             for xx in hb_x), 13, "fixing", None)
+    for s1 in (-1, 1):
+        for s2 in (-1, 1):
+            fit("frame_screws", "M3 screws, window frame (4)", "M3 pan head screw, window frame",
+                H * put(pan_screw(3, 12), (s1 * sx_, s2 * sy_, -hz / 2 - film_t - fw), (0, 0, -1)))
+    if p.get("head_type") == "radar":
+        zpcb = -13.0
+        radar = (box(0, 0, zpcb - 0.8, 55, 48, 1.6) + box(0, 0, zpcb - 1.6 - 0.4, 14, 14, 0.8) + box(0, 0, zpcb + 1.5, 14, 10, 3.0)
+                 + box(-18, 14, zpcb + 1.0, 8, 6, 2.0))
+        add("array", "60 GHz radar module (board, antenna, shield)", H * radar, 10, "bought", "array")
+    else:
+        add("array", "Thermal array on its breakout", H * (zcyl(0, 0, -hz / 2 + 14, 4.7, 12) + box(0, 0, -hz / 2 + 21, 32, 26, 2)), 10, "bought", "array")
+    for xx in hb_x:
+        fit("head_bolts", "M5 bolts, head to arm (2)", "M5x50 hex bolt (ISO 4017)", put(cp.hex_bolt(5, 50), (xx, 0, az + a / 2), (0, 0, 1)))
     gl = (xcyl(-hx / 2 - 1.5, gy, 0, 10.0, 3.0) + xcyl(-hx / 2 - 3 - 7, gy, 0, 7.0, 14.0)
           + xcyl(-hx / 2 + hw / 2, gy, 0, 8.0, hw) + hexprism("x", -hx / 2 + hw + 2.5, gy, 0, 18.0, 5.0))
     add("head_gland", "Cable gland on the head, M16", H * gl, 13, "bought", None)
@@ -667,7 +756,7 @@ def build_components(p=PARAMS):
     ri, ro = D["sleeve_r_in"], D["sleeve_r_out"]
     slen = p["sleeve"][0]
     ct = D["cap_top"]
-    sleeve = zcyl(px, 0, ct - slen / 2, ro, slen) - zcyl(px, 0, ct - slen / 2, ri, slen + 2)
+    sleeve = b.Pos(px, 0, ct - slen) * cp.round_tube(2 * ro, ro - ri, slen)
     disc = zcyl(px, 0, pt + p["cap_t"] / 2, ri, p["cap_t"])
     zd = pt + p["cap_t"] / 2
     rad = [b.Pos(px + ((ri - 12) + ro) / 2 * math.cos(math.radians(45 + 90 * k)), ((ri - 12) + ro) / 2 * math.sin(math.radians(45 + 90 * k)), zd)
@@ -675,6 +764,9 @@ def build_components(p=PARAMS):
     for s_ in rad:
         sleeve -= s_
         disc -= s_
+    for k in range(4):
+        ang = math.radians(45 + 90 * k)
+        sleeve -= _cone_cut((px + ro * math.cos(ang), ro * math.sin(ang), zd), (-math.cos(ang), -math.sin(ang), 0), 8.0, 2.0)
     zs_ = D["sleeve_bot"] + 25
     riv, sets = [], []
     for k in range(3):
@@ -686,15 +778,20 @@ def build_components(p=PARAMS):
         sets.append(b.Pos(px, 0, zs_) * R * (b.Pos((pr + ro + 1.5 + 8) / 2, 0, 0) * b.Rot(0, 90, 0) * b.Cylinder(4.0, ro + 1.5 + 8 - pr)))
     add("sleeve", "Sleeve", sleeve, 5, "made", "mount")
     add("disc", "Cap disc", disc, 5, "made", "mount")
-    add("disc_screws", "M4 countersunk screws, cap disc (4)", fuse(rad), 13, "fixing", None)
-    add("rivnuts", "M8 rivet nuts and set screws (3)", fuse(riv) + fuse(sets), 5, "bought", "mount")
+    for k in range(4):
+        ang = math.radians(45 + 90 * k)
+        fit("disc_screws", "M4 screws, cap disc (4)", "M4x15 countersunk screw, cap disc",
+            put(csk_screw(4, 15), (px + ro * math.cos(ang), ro * math.sin(ang), zd), (math.cos(ang), math.sin(ang), 0)))
+    for k in range(3):
+        fit("rivnuts", "M8 rivet nuts and set screws (3)", "M8 rivet nut", riv[k], "stainless", "bought", 5)
+        fit("rivnuts", "M8 rivet nuts and set screws (3)", "M8 cup-point set screw", sets[k], "stainless", "fastener")
     po, pw2, ph = p["post"]
-    post = zcyl(px, 0, ct + ph / 2, po / 2, ph) - zcyl(px, 0, ct + ph / 2, po / 2 - pw2, ph + 2)
+    post = b.Pos(px, 0, ct) * cp.round_tube(po, pw2, ph)
     pl_ = p["plug"][0]
     pz_low = [ct + 12.0, ct + 28.0]
     ptop = D["post_top"]
     pz_up = [ptop - 10.0, ptop - 26.0]
-    plugs = zcyl(px, 0, ct + pl_ / 2, po / 2 - pw2, pl_) + zcyl(px, 0, ptop - pl_ / 2, po / 2 - pw2, pl_)
+    plugs = b.Pos(px, 0, ct) * cp.round_bar(po - 2 * pw2, pl_, 0.8) + b.Pos(px, 0, ptop - pl_) * cp.round_bar(po - 2 * pw2, pl_, 0.8)
     for zz in pz_low + pz_up:
         post -= ycyl(px, 0, zz, 4.25, po + 2)
         plugs -= ycyl(px, 0, zz, 4.25, po + 2)
@@ -704,18 +801,20 @@ def build_components(p=PARAMS):
     rpo = po / 2
     low = []
     lowfix = []
+    disc_cut = []
     for s in (1, -1):
         y0, y1 = s * rpo, s * (rpo + ctk)
         leg_v = bx(px - clen / 2, px + clen / 2, min(y0, y1), max(y0, y1), ct, ct + cl_)
         yh = s * (rpo + 30)
         leg_h = bx(px - clen / 2, px + clen / 2, min(y0, yh), max(y0, yh), ct, ct + ctk)
         cl = leg_v + leg_h
+        cl = cp.break_edges(cl, 0.8)
         for zz in pz_low:
             cl -= ycyl(px, (y0 + y1) / 2, zz, 4.25, ctk + 2)
         for dx in (-9, 9):
             cl -= zcyl(px + dx, s * (rpo + 19), ct + ctk / 2, 2.75, ctk + 2)
-            lowfix.append(zcyl(px + dx, s * (rpo + 19), ct - p["cap_t"] / 2 + ctk / 2, 2.75, p["cap_t"] + ctk)
-                          + hexprism("z", px + dx, s * (rpo + 19), ct + ctk + 2.25, 8.0, 4.5))
+            lowfix.append((px + dx, s * (rpo + 19)))
+            disc_cut.append(_cone_cut((px + dx, s * (rpo + 19), pt), (0, 0, 1), 10.0, 2.5))
         low.append(cl)
     add("lclip_r", "Lower post clip (right)", low[1], 5, "made", "mount")
     add("lclip_l", "Lower post clip (left)", low[0], 5, "made", "mount")
@@ -724,6 +823,8 @@ def build_components(p=PARAMS):
     for dx in (-9, 9):
         for s in (1, -1):
             dd -= zcyl(px + dx, s * (rpo + 19), pt + p["cap_t"] / 2, 2.75, p["cap_t"] + 2)
+    for cc in disc_cut:
+        dd -= cc
     C["disc"].shape = dd
     # upper clips and rail plate, built in the rail frame: s along the slope, y across, m along the plate normal
     P0, u, n = D["rail_P0"], D["rail_u"], D["rail_n"]
@@ -747,26 +848,36 @@ def build_components(p=PARAMS):
     add("uclip_l", "Upper post clip (left)", up[0], 5, "made", "mount")
     rl, rw, rt = p["hinge"]
     rail = bx(-rl / 2, rl / 2, -rw / 2, rw / 2, 0, rt)
-    for s in (1, -1):
+    for sgn in (1, -1):
         for ss in (-30.0, -15.0):
-            rail -= zcyl(ss, s * (rpo + 30), rt / 2, 2.75, rt + 2)
-            upfix.append(zcyl(ss, s * (rpo + 30), (rt - ctk) / 2, 2.5, rt + ctk) + zcyl(ss, s * (rpo + 30), rt + 1.4, 4.5, 2.8)
-                         + hexprism("z", ss, s * (rpo + 30), -ctk - 2.0, 8.0, 4.0))
+            rail -= zcyl(ss, sgn * (rpo + 30), rt / 2, 2.75, rt + 2)
+            rail -= _csk_cut(ss, sgn * (rpo + 30), rt, 5)
     pw, pln, pth = p["panel"]
     lip = 12.0
     for sl in (-1, 1):
         for yy in (-50.0, 50.0):
             rail -= zcyl(sl * (pw / 2 - lip / 2), yy, rt / 2, 2.25, rt + 2)
-            upfix.append(zcyl(sl * (pw / 2 - lip / 2), yy, (rt + 4) / 2 - 0.5, 2.0, rt + 5) + hexprism("z", sl * (pw / 2 - lip / 2), yy, -1.4, 7.0, 2.8))
     rail -= zcyl(0, rw / 2 - 12, rt / 2, 3.0, rt + 2)       # lanyard hole
     for sl in (-1, 1):                                       # lightening windows between the clips and the lip bolts
         rail -= b.Pos(sl * 85.0, 0, rt / 2) * b.extrude(b.RectangleRounded(90, 90, 6), rt / 2 + 1, both=True)
     add("rail", "Rail plate", RF * rail, 5, "made", "mount")
-    add("panel", "Solar panel, 6 W", RF * box(0, 0, rt + pth / 2, pw, pln, pth), 4, "bought", "panel")
-    cbolts = [_bolt_y(-(rpo + ctk), rpo + ctk, px, zz, 8.0, 13.0) for zz in pz_low + pz_up]
-    add("post_bolts", "M8 bolts, post clips (4)", fuse(cbolts), 13, "fixing", None)
-    add("clip_screws", "M5 screws, clips to disc and rail plate (8); M4 bolts, panel lip (4)",
-        fuse(lowfix) + RF * fuse(upfix), 13, "fixing", None)
+    add("panel", "Solar panel, 6 W" if p.get("n_cells", 1) == 1 else "Solar panel, 20 W", RF * _panel_solid(p, rt), 4, "bought", "panel")
+    for zz in pz_low + pz_up:
+        bolt_set("post_bolts", "M8 bolts, post clips (4)", 8, po + 2 * ctk, (px, -(rpo + ctk), zz), (0, -1, 0))
+    for (cx_, cy_) in lowfix:
+        L5 = "M5 screws, clips to disc and rail plate (8); M4 bolts, panel lip (4)"
+        fit("clip_screws", L5, "M5x16 countersunk screw, disc", put(csk_screw(5, 16), (cx_, cy_, pt), (0, 0, -1)))
+        fit("clip_screws", L5, "M5 hex nut (ISO 4032), clip", put(cp.hex_nut(5), (cx_, cy_, ct + ctk), (0, 0, 1)))
+    for sgn in (1, -1):
+        for ss in (-30.0, -15.0):
+            L5 = "M5 screws, clips to disc and rail plate (8); M4 bolts, panel lip (4)"
+            fit("clip_screws", L5, "M5x14 countersunk screw, rail plate", RF * put(csk_screw(5, 14), (ss, sgn * (rpo + 30), rt), (0, 0, 1)))
+            fit("clip_screws", L5, "M5 hex nut (ISO 4032), upper clip", RF * put(cp.hex_nut(5), (ss, sgn * (rpo + 30), -ctk), (0, 0, -1)))
+    for sl in (-1, 1):
+        for yy in (-50.0, 50.0):
+            for nm, sh in _bolt_nut(4, rt + 2.0):
+                fit("clip_screws", "M5 screws, clips to disc and rail plate (8); M4 bolts, panel lip (4)", nm,
+                    RF * put(sh, (sl * (pw / 2 - lip / 2), yy, 0.0), (0, 0, -1)))
 
     # ---- 11 sensor cable and panel lead, tied to the pole on its +Y side, over the bands
     cr = p["cable_d"] / 2
@@ -799,7 +910,61 @@ def build_components(p=PARAMS):
     add("notice", "Public notice plate", _to_world(nplate, 1, px - pr, nz), 12, "made", "notice")
     ties = fuse(b.Pos(0, 0, z) * _band_local(pr, pr, ty, nt, tw, tt) for z in (-tz, tz))
     add("notice_ties", "Stainless cable ties, notice plate (2)", _to_world(ties, 1, px - pr, nz), 12, "bought", "notice")
-    return C
+    return C, FIT
+
+
+# ------------------------------------------------------------------ kit 1.9 interface: options and parts
+OPTIONS = {"A": "Thermal array head (LWIR, 32 x 24 px)", "B": "60 GHz radar head"}
+PRINCIPLES = {
+    "A": "A 32 x 24 pixel thermal array looks down over the street; the STM32WL tracks warm blobs and counts them by class and direction, "
+         "and the sensor is too coarse to show a face (7.6 px/m at head height).",
+    "B": "A 60 GHz FMCW radar module looks down over the street and tracks moving reflectors by range, angle and speed; it works in heat "
+         "and darkness and sees no image, but draws far more power (two cells and a 20 W panel).",
+}
+CHOSEN = "A"        # the current design; the recommendation is "Proposed, awaiting Amish" (CBC-OPT-001)
+OPTION_VIEWS = {k: {"el": 18, "az": -128, "scale": "person", "keep_context": True, "ground_z": PARAMS["sw_h"]} for k in OPTIONS}
+ALLOWED_CONTACTS = [("M5 rivet", "set screw"), ("rivet nut", "set screw")]
+
+# Option B differs in what senses and what powers it: a printed radar head (radome plate in place of the HDPE film, radar module
+# in place of the thermal array), a second LiFePO4 cell and a 20 W panel (FieldNode's high-load variant, CBC-DDR-002).
+PARAMS_B = dict(PARAMS, head_type="radar", head=(100.0, 80.0, 50.0), hood=(110.0, 90.0, 3.0), hood_dx=0.0, window=(90.0, 70.0, 2.0),
+                head_screws=(42.0, 32.0), n_cells=2, panel=(350.0, 430.0, 25.0), hinge=(350.0, 150.0, 3.0))
+OPTION_PARAMS = {"A": PARAMS, "B": PARAMS_B}
+
+_MAT = {"body": "pe_tank_silver", "lid": "pe_tank_silver", "lugs": "stainless", "glands": "matte_black", "ports": "brass",
+        "vent": "pe_tank_white", "antenna": "matte_black", "mplate": "pe_tank_silver", "cell": "aluminium", "cell2": "aluminium",
+        "power": "matte_black", "ctrl": "matte_black", "connectors": "matte_black", "enc_bands": "stainless", "arm_bands": "stainless",
+        "arm_cap": "matte_black", "housing": "pe_tank_white", "frame": "matte_black", "film": "hdpe_natural", "array": "matte_black",
+        "head_gland": "matte_black", "rivnuts": "stainless", "cable": "epdm", "panel_lead": "epdm", "notice_ties": "stainless",
+        "panel": "matte_black"}
+_COLOR = {"panel": "#1C2B4A", "notice": "#F4F1E6", "array": "#7C3AED", "power": "#166534", "ctrl": "#166534", "cell": "#1E3A8A",
+          "cell2": "#1E3A8A", "film": "#E4ECF0"}
+
+
+def components(option=CHOSEN):
+    """cad_parts.part() dicts for one concept option (kit 1.9). BOM line numbers are set on the made and bought parts of every
+    option; they match bom/bom.csv for option A, the chosen design."""
+    from cad_parts import part
+    p = OPTION_PARAMS[option]
+    C, FIT = build_items(p)
+    out = []
+    for key, c in C.items():
+        kind = c.kind
+        name = c.name
+        if option == "B" and key == "film":
+            name = "Radome plate, ASA 2 mm"
+            kind = "made"
+        if option == "B" and key == "panel":
+            name = "Solar panel, 20 W"
+        mat = _MAT.get(key, "aluminium")
+        if option == "B" and key == "film":
+            mat = "pe_tank_white"
+        out.append(part(name, c.shape, mat, kind=kind, bom=c.bom, group=c.group or "shell", color=_COLOR.get(key)))
+    for f in FIT:
+        out.append(part(f["name"], f["shape"], f["material"], kind=f["kind"], bom=f["bom"], group="fixings"))
+    ctx = context_parts(p)
+    out.append(part("Street pole, 114.3 mm (site)", ctx["pole"], "galvanised", kind="context", group="context"))
+    return out
 
 
 def cable_routes(p=PARAMS):
@@ -986,26 +1151,18 @@ def print_checks(p=PARAMS):
 if __name__ == "__main__":
     if "--check" in sys.argv:
         sys.exit(1 if print_checks() else 0)
-    from build123d import Compound, export_step, export_stl
+    # STEP files come from `python .kit/cad_check.py --export`; this writes the STL of each option (tolerance 0.2 mm).
+    from build123d import Compound, export_stl
     out = Path(__file__).resolve().parents[1]
-    (out / "step").mkdir(exist_ok=True)
     (out / "stl").mkdir(exist_ok=True)
-    C = build_components()
-    pole = context_parts()["pole"]
-    head = [k for k, c in C.items() if c.bom in (7, 8, 9, 10) or k in ("arm_bolts", "arm_spacers", "arm_vs_screws", "head_bolts",
-                                                                         "frame_screws", "head_gland")]
-    core = [k for k in C if k not in head and k not in ("cable", "notice", "notice_ties")]
-    groups = {
-        "curbcount-assembly": [c.shape for c in C.values()] + [pole],
-        "sensor-head": [C[k].shape for k in head],
-        "power-core": [C[k].shape for k in core],
-    }
-    for name, shapes in groups.items():
-        c = Compound(children=shapes)
-        export_step(c, str(out / "step" / f"{name}.step"))
+    for opt in OPTIONS:
+        parts = [q for q in components(opt) if q["kind"] != "context"]
+        c = Compound(children=[q["shape"] for q in parts])
+        name = "curbcount-assembly" if opt == CHOSEN else f"curbcount-option-{opt}"
         export_stl(c, str(out / "stl" / f"{name}.stl"), tolerance=0.2, angular_tolerance=0.3)
         bb = c.bounding_box()
-        print(f"{name}: {bb.size.X:.0f} x {bb.size.Y:.0f} x {bb.size.Z:.0f} mm")
+        print(f"{name}: {len(parts)} parts, {bb.size.X:.0f} x {bb.size.Y:.0f} x {bb.size.Z:.0f} mm, "
+              f"{sum(__import__('cad_parts').mass_kg(q) for q in parts):.2f} kg")
     D = derived()
     print(f"arm {D['arm_len']:.0f} mm, head reach from pole axis {D['reach']:.0f} mm, arm axis at {D['arm_z']:.0f} mm; "
           f"panel top {D['panel_top']:.0f} mm above the road; footprint across {D['fp_x_min']:.0f} to {D['fp_x_max']:.0f} mm; "
